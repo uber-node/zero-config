@@ -1,0 +1,56 @@
+{
+  "name": "zero-config",
+  "version": "1.0.0",
+  "description": "A zero configuration configuration loader",
+  "keywords": [],
+  "author": "Raynos <raynos2@gmail.com>",
+  "repository": "git://github.com/uber/zero-config.git",
+  "main": "index",
+  "homepage": "https://github.com/uber/zero-config",
+  "bugs": {
+    "url": "https://github.com/uber/zero-config/issues",
+    "email": "raynos2@gmail.com"
+  },
+  "dependencies": {
+    "config-chain": "^1.1.8",
+    "dotty": "0.0.2",
+    "error": "^4.1.1",
+    "flatten-prototypes": "^2.0.1",
+    "minimist": "^1.1.0",
+    "process": "^0.7.0"
+  },
+  "devDependencies": {
+    "coveralls": "^2.10.0",
+    "fixtures-fs": "^1.0.2",
+    "istanbul": "^0.2.7",
+    "jshint": "^2.5.0",
+    "opn": "^0.1.2",
+    "pre-commit": "0.0.5",
+    "tap-spec": "^0.2.0",
+    "tape": "^2.14.0"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/uber/zero-config/raw/master/LICENSE"
+    }
+  ],
+  "scripts": {
+    "test": "npm run jshint -s && node test/index.js | tap-spec",
+    "unit-test": "node test/index.js | tap-spec",
+    "jshint-pre-commit": "jshint --verbose $(git diff --cached --name-only | grep '\\.js$')",
+    "jshint": "jshint --verbose $(git ls-files | grep '\\.js$')",
+    "cover": "istanbul cover --report none --print detail test/index.js",
+    "view-cover": "istanbul report html && opn ./coverage/index.html",
+    "travis": "npm run cover -s && istanbul report lcov && ((cat coverage/lcov.info | coveralls) || exit 0)"
+  },
+  "engine": {
+    "node": ">= 0.8.x"
+  },
+  "pre-commit": [
+    "jshint-pre-commit",
+    "unit-test"
+  ],
+  "private": true,
+  "playdoh-version": "2.5.0"
+}

@@ -1,0 +1,225 @@
+# zero-config
+
+<!--
+    [![build status][build-png]][build]
+    [![Coverage Status][cover-png]][cover]
+    [![Davis Dependency status][dep-png]][dep]
+-->
+
+<!-- [![NPM][npm-png]][npm] -->
+
+<!-- [![browser support][test-png]][test] -->
+
+A zero configuration configuration loader
+
+## Example
+
+```js
+// config/common.json
+{
+    "port": 9001
+}
+```
+
+```js
+// config/production.json
+{
+    "redis": {
+        "host": "localhost",
+        "port": 6379
+    }
+}
+```
+
+```js
+// server.js
+var fetchConfig = require('playdoh-server/config')
+
+var NODE_ENV = process.env.NODE_ENV
+var config = fetchConfig(__dirname, {
+    dc: NODE_ENV === 'production' ?
+        '/etc/playdoh/datacenter' : null
+})
+
+var port = config.get("port")
+var redisConf = config.get("redis")
+var redisPort = config.get("redis.port")
+```
+
+You can also call the process with
+    `node server.js --port 10253` to change the config 
+    information from the command line
+
+## Docs
+
+### `var config = fetchConfig(dirname, opts)`
+
+```ocaml
+playdoh-server/config := (dirname: String, opts?: {
+    argv?: Array<String>,
+    dc?: String,
+    blackList?: Array<String>,
+    env?: Object<String, String>
+}) => {
+    get: (keypath?: String) => Any,
+    set: (keypath: String, value: Any) => void,
+    __state: Object<String, Any>
+}
+```
+
+`fetchConfig` takes the current __dirname as an argument, it 
+  assumes that there exists a config folder at `./config` in 
+  your project and it assumes there exists a `common.json` and a
+  `NODE_ENV.json` for each environment.
+
+It returns you a `config` object with a `get(keypath)` method
+  to fetch properties out of config. `get()` takes a keypath,
+  i.e. `"prop.nested.someKey"`to get direct or nested properties
+  in the config object.
+
+It's recommended you use `.get()` as in the future we will 
+  enable dynamic config properties through flipr support.
+
+### The config lookup algorithm
+
+The `fetchConfig()` function tries to fetch config from multiple
+  locations and then deep merges the objects it finds together
+  into a single object.
+
+Below are the sources it reads in order of least precendence.
+  i.e. the later sources in the list overwrite the earlier ones
+
+ - a `config/common.json` JSON file in your project
+ - a `config/NODE_ENV.json` JSON file in your project
+ - a `config/NODE_ENV.{datacenter}.json` JSON file in your
+    project if you specificed a datacenter.
+ - a `{ datacenter: '{datacenter}' }` literal if you 
+    specified a datacenter.
+ - a `--config=/var/config/some-file.json` JSON file if you
+    passed a command line argument called `--config` to the
+    process.
+ - a object literal based on command line arguments. i.e. if 
+    you pass `--foo='bar' --bar.baz='bob'` you will get
+    `{ "foo": "bar", "bar": { "baz": "bob" } }`
+
+The config loader also uses `config-chain` for the actual
+  loading logic so you can read [their docs][config-chain]
+
+#### `dirname`
+
+`dirname` is the directory that is the parent of the `config`
+  directly. If you call `fetchConfig` in a file located in the 
+  root directory you can just pass `__dirname` as config lives
+  at `./config`.
+
+If you require `fetchConfig` anywhere else like `./api/server.js`
+  you will have to pass `path.join(__dirname, '..')`
+
+#### `opts`
+
+`opts` is an optional object, that contains the following
+  properties.
+
+**Note** that `opts` is only optional in environments other then
+  `"production`". If your `process.env.NODE_ENV` is set to
+  `"production"` then you **MUST** specifiy `opts` and specify
+  the `opts.dc` parameter.
+
+Running a production service without knowing how to load 
+  datacenter specific configuration is a bug.
+
+#### `opts.dc`
+
+`opts.dc` is either `null` or a string path to a file that 
+  contains the name of the datacenter.
+
+Say you have two datacenters, EC2-west and EC2-east. It's 
+  recommended that you have a file called `/etc/datacenter`
+  that contains either the string `EC2-west` or `EC2-east`.
+
+This way any service can know what datacenter it is running
+  in with a simple `cat /etc/datacenter`.
+
+Note that if you pass the dc config to `fetchConfig` then the
+  config object will contain the `"datacenter"` key whose value
+  is either `EC2-west` or `EC2-east` or whatever your datacenter
+  names are.
+
+We will also load the file `config/production.EC2-west.json`
+  and merge that into the config tree.
+
+#### `opts.argv`
+
+`opts.argv` is optional and probably not needed
+
+`fetchConfig` will read your process argv information using
+  the [`minimist`][minimist] module.
+
+If you do not want `fetchConfig` to read global argv for you,
+  you can pass in an `argv` object with keys like `'foo'` and
+  `'bar.baz''` and values that are strings / numbers / booleans
+
+#### `opts.blackList`
+
+`opts.blackList` is an optional array of argv keys to blacklist.
+
+`fetchConfig` by default converts all command line arguments to
+  configuration keys. If you want to pass a non config key 
+  command line argument like `--debug` or `--restart-fast`, etc.
+  then you might want to add them to the `blackList`
+
+If your `opts.blackList` is `['debug']` then `config.get('debug')`
+  will not resolve to the `--debug` command line argument.
+
+#### `opts.env`
+
+`opts.env` is optional and probably not needed.
+
+`fetchConfig` will read the env using `process.env`. The only
+  property it reads is an environment variable called `NODE_ENV`.
+
+If you prefer to not have this variable configured through
+  the environment or want to call it something else then you
+  can pass in `{ NODE_ENV: whatever }` as `opts.env`
+
+#### `var value = config.get(keypath)`
+
+`config.get(keypath)` will return the value at a keypath. The 
+  `keypath` must be a string.
+
+You can call `config.get('port')` to get the port value. You
+  can call `config.get('playdoh-logger.kafka.port')` to get
+  the nested kafka port config option.
+
+#### `config.set(keypath, value)`
+
+`config.set(keypath, value)` will set a value at the keypath.
+
+You can call `config.set("port", 9001)` to set the port value.
+  You can call `config.set("playdoh-logger.kafka.port", 9001)` to
+  set then nested kafka port config option.
+
+## Installation
+
+`npm install zero-config`
+
+## Tests
+
+`npm test`
+
+## Contributors
+
+ - Raynos
+
+## MIT Licenced
+
+  [build-png]: https://secure.travis-ci.org/uber/zero-config.png
+  [build]: https://travis-ci.org/uber/zero-config
+  [cover-png]: https://coveralls.io/repos/uber/zero-config/badge.png
+  [cover]: https://coveralls.io/r/uber/zero-config
+  [dep-png]: https://david-dm.org/uber/zero-config.png
+  [dep]: https://david-dm.org/uber/zero-config
+  [test-png]: https://ci.testling.com/uber/zero-config.png
+  [tes]: https://ci.testling.com/uber/zero-config
+  [npm-png]: https://nodei.co/npm/zero-config.png?stars&downloads
+  [npm]: https://nodei.co/npm/zero-config
