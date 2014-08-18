@@ -195,7 +195,7 @@ function fetchConfigSync(dirname, opts) {
         var v = getKey(keyPath);
 
         if (typeof v === 'object' && v !== null) {
-            v = deepExtend(v, value);
+            v = deepExtend({}, v, value);
         } else {
             v = value;
         }
