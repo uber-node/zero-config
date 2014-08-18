@@ -256,6 +256,36 @@ test('config.set()', function (assert) {
     assert.end();
 });
 
+test('config.set() deep', function (assert) {
+    var config = fetchConfig(__dirname);
+
+    config.set('key', {
+        foo: 'bar',
+        deep: {
+            'thingy': 'thongy'
+        }
+    });
+
+    config.set('key', {
+        newKey: 'woh',
+        deep: {
+            'other': 'yeah'
+        }
+    });
+
+    var k = config.get('key');
+    assert.deepEqual(k, {
+        foo: 'bar',
+        newKey: 'woh',
+        deep: {
+            'thingy': 'thongy',
+            'other': 'yeah'
+        }
+    });
+
+    assert.end();
+});
+
 test('config.set(undefined) throws', function (assert) {
     var config = fetchConfig(__dirname);
 

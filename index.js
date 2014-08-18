@@ -8,6 +8,7 @@ var join = require('path').join;
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 var TypedError = require('error/typed');
+var deepExtend = require('deep-extend');
 
 var InvalidDirname = TypedError({
     type: 'missing.dirname.argument',
@@ -191,6 +192,14 @@ function fetchConfigSync(dirname, opts) {
             });
         }
 
-        return putPath(configState, keyPath, value);
+        var v = getKey(keyPath);
+
+        if (typeof v === 'object' && v !== null) {
+            v = deepExtend(v, value);
+        } else {
+            v = value;
+        }
+
+        return putPath(configState, keyPath, v);
     }
 }
