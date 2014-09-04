@@ -149,6 +149,8 @@ function fetchConfigSync(dirname, opts) {
         "transports" for loading configuration from disk
     */
     var configTree = configChain(
+        // the seed option overwrites everything
+        opts.seed || null,
         // include all CLI arguments
         makeDeep(cliArgs),
         // load file from --config someFilePath

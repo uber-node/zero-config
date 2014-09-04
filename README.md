@@ -59,7 +59,8 @@ playdoh-server/config := (dirname: String, opts?: {
     argv?: Array<String>,
     dc?: String,
     blackList?: Array<String>,
-    env?: Object<String, String>
+    env?: Object<String, String>,
+    seed?: Object<String, Any>
 }) => {
     get: (keypath?: String) => Any,
     set: (keypath: String, value: Any) => void,
@@ -101,6 +102,7 @@ Below are the sources it reads in order of least precendence.
  - a object literal based on command line arguments. i.e. if 
     you pass `--foo='bar' --bar.baz='bob'` you will get
     `{ "foo": "bar", "bar": { "baz": "bob" } }`
+ - a seed object of manual overwrites for testing purposes.
 
 The config loader also uses `config-chain` for the actual
   loading logic so you can read [their docs][config-chain]
@@ -181,6 +183,21 @@ If your `opts.blackList` is `['debug']` then `config.get('debug')`
 If you prefer to not have this variable configured through
   the environment or want to call it something else then you
   can pass in `{ NODE_ENV: whatever }` as `opts.env`
+
+#### `opts.seed`
+
+`opts.seed` is optional, it can be set to an object
+
+If it exists we will merge the seed object into the config
+  data we have fetched. seed overwrites all the other sources
+  of configuration.
+
+The `seed` option is very useful for testing purposes, it allows
+  you to overwrite the configuration that your application would
+  load with test specific properties.
+
+This is an alternative to the `NODE_ENV=test `pattern, we highly
+  recommend that you do not have a `test.json` file at all.
 
 #### `var value = config.get(keypath)`
 

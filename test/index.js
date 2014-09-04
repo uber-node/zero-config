@@ -296,3 +296,28 @@ test('config.set(undefined) throws', function (assert) {
     assert.end();
 
 });
+
+test('config({ seed: seed })', function (assert) {
+    var argv = [
+        '--foo', 'bar',
+        '--baz.lulz', 'some value',
+        '--baz.foob', 'thingy'
+    ];
+
+    var config = fetchConfig(__dirname, {
+        argv: argv,
+        seed: {
+            baz: {
+                lulz: 42
+            },
+            bar: 'foo'
+        }
+    });
+
+    assert.equal(config.get('foo'), 'bar');
+    assert.equal(config.get('baz.lulz'), 42);
+    assert.equal(config.get('baz.foob'), 'thingy');
+    assert.equal(config.get('bar'), 'foo');
+
+    assert.end();
+});
