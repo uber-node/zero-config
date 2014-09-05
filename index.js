@@ -188,7 +188,7 @@ function fetchConfigSync(dirname, opts) {
     }
 
     function setKey(keyPath, value) {
-        if (typeof keyPath !== 'string') {
+        if (typeof keyPath !== 'string' && !Array.isArray(keyPath)) {
             throw InvalidKeyPath({
                 keyPath: keyPath
             });
