@@ -248,10 +248,15 @@ test('config.set()', function (assert) {
     config.set('key', 'value');
     config.set('nested.key', 'value2');
     config.set('nested.key3', 'value3');
+    config.set(['nested', 'key4'], 'value4');
+    config.set(['nested', 'key.with.dots5'], 'value5');
 
-    assert.equal(config.get('key'), 'value');
-    assert.equal(config.get('nested.key'), 'value2');
-    assert.equal(config.get('nested.key3'), 'value3');
+    assert.equal(config.get('key'), 'value', 'flat key');
+    assert.equal(config.get('nested.key'), 'value2', 'nested key');
+    assert.equal(config.get('nested.key3'), 'value3', 'child nested key');
+    assert.equal(config.get('nested.key4'), 'value4', 'array key');
+    assert.equal(config.get(['nested', 'key.with.dots5']),
+        'value5', 'array key with dots');
 
     assert.end();
 });
