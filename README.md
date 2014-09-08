@@ -1,10 +1,8 @@
 # zero-config
 
-<!--
-    [![build status][build-png]][build]
-    [![Coverage Status][cover-png]][cover]
-    [![Davis Dependency status][dep-png]][dep]
--->
+[![build status][build-png]][build]
+[![Coverage Status][cover-png]][cover]
+[![Davis Dependency status][dep-png]][dep]
 
 <!-- [![NPM][npm-png]][npm] -->
 
