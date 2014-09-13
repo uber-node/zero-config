@@ -1,6 +1,6 @@
 {
   "name": "zero-config",
-  "version": "2.1.0",
+  "version": "2.1.0-set-remote",
   "description": "A zero configuration configuration loader",
   "keywords": [],
   "author": "Raynos <raynos2@gmail.com>",
