@@ -45,4 +45,3 @@ function fetchConfigSync(dirname, opts) {
 
     return config;
 }
-
