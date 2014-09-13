@@ -98,7 +98,6 @@ function fetchConfigSync(dirname, opts) {
 
     // deprecated: __state, __tree
     config.__state = configState;
-    config.__tree = configTree;
 
     return config;
 
