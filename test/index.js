@@ -370,3 +370,23 @@ test('config.setRemote()', function t(assert) {
 
     assert.end();
 });
+
+test('config.freeze()', function t(assert) {
+    var config = fetchConfig(__dirname);
+
+    config.set('foo', 'bar');
+
+    assert.equal(config.get('foo'), 'bar');
+
+    config.freeze();
+
+    assert.throws(function () {
+        config.set('foo', 'baz');
+    }, /Config is frozen/);
+
+    assert.throws(function () {
+        config.set('bar', 'baz');
+    }, /Config is frozen/);
+
+    assert.end();
+});

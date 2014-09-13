@@ -7,9 +7,12 @@ var errors = require('./errors.js');
 module.exports = ConfigWrapper;
 
 function ConfigWrapper(configObject) {
+    var frozen = false;
+
     return {
         get: getKey,
-        set: setKey
+        set: setKey,
+        freeze: freeze
     };
 
     function getKey(keyPath) {
@@ -21,6 +24,14 @@ function ConfigWrapper(configObject) {
     }
 
     function setKey(keyPath, value) {
+        if (frozen) {
+            throw errors.SetFrozenObject({
+                keyPath: keyPath,
+                valueStr: JSON.stringify(value),
+                value: value
+            });
+        }
+
         if (arguments.length === 1) {
             return multiSet(keyPath);
         }
@@ -40,6 +51,10 @@ function ConfigWrapper(configObject) {
         }
 
         return putPath(configObject, keyPath, v);
+    }
+
+    function freeze() {
+        frozen = true;
     }
 
     function multiSet(obj) {

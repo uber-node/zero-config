@@ -65,6 +65,7 @@ zero-config := (dirname: String, opts?: {
     get: (keypath?: Keypath) => Any,
     set: ((keypath: Keypath, value: Any) => void) &
         (value: Any) => void,
+    freeze: () => void,
     getRemote: (keypath?: Keypath) => Any,
     setRemote: ((keypath: Keypath, value: Any) => void) &
         (value: Any) => void
@@ -223,6 +224,19 @@ Note you can also call `config.set(entireObject)` to merge an
   entire object into the `config` instance. This will use 
   deep extend to set all the key / value pairs in `entireObject`
   onto the config instance.
+
+#### `config.freeze()`
+
+Since the `config` object is supposed to represent a set of
+  static, immutable configuration that's loaded at process
+  startup time it would be useful to enforce this.
+
+Once you are ready to stop mutating `config` you can call
+  `.freeze()`. Any future calls to `.set()` will throw a 
+  config frozen exception.
+
+Note that you can always call `config.setRemote()` as that is
+  not effected by `.freeze()`
 
 #### `var value = config.getRemote(keypath)`
 

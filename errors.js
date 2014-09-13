@@ -50,11 +50,25 @@ var InvalidMultiSetArgument = TypedError({
     obj: null
 });
 
+var SetFrozenObject = TypedError({
+    type: 'set.frozen.object',
+    message: 'Cannot `config.set(key, value)`. Config is ' +
+        'frozen.\n' +
+        'expected `config.set()` not to be called. Instead ' +
+        'it was called with {keyPath} and {valueStr}.\n' +
+        'SUGGESTED FIX: Do not call `config.set()` it was ' +
+        'frozen by someone else.\n',
+    keyPath: null,
+    valueStr: null,
+    value: null
+});
+
 module.exports = {
     InvalidDirname: InvalidDirname,
     MissingDatacenter: MissingDatacenter,
     DatacenterRequired: DatacenterRequired,
     DatacenterFileRequired: DatacenterFileRequired,
     InvalidKeyPath: InvalidKeyPath,
-    InvalidMultiSetArgument: InvalidMultiSetArgument
+    InvalidMultiSetArgument: InvalidMultiSetArgument,
+    SetFrozenObject: SetFrozenObject
 };

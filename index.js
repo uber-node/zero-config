@@ -39,6 +39,7 @@ function fetchConfigSync(dirname, opts) {
 
     config.get = localConfigWrapper.get;
     config.set = localConfigWrapper.set;
+    config.freeze = localConfigWrapper.freeze;
     config.getRemote = remoteConfigWrapper.get;
     config.setRemote = remoteConfigWrapper.set;
 
