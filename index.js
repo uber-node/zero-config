@@ -1,15 +1,12 @@
 var process = require('process');
-var getPath = require('dotty').get;
-var putPath = require('dotty').put;
 var EventEmitter = require('events').EventEmitter;
-var deepExtend = require('deep-extend');
 
 var errors = require('./errors.js');
 var readDatacenter = require('./read-datacenter.js');
 var getConfigState = require('./get-config-state.js');
+var ConfigWrapper = require('./config-wrapper.js');
 
 module.exports = fetchConfigSync;
-
 
 function fetchConfigSync(dirname, opts) {
     if (typeof dirname !== 'string' || dirname === '') {
@@ -37,38 +34,14 @@ function fetchConfigSync(dirname, opts) {
     }
 
     var configState = getConfigState(dirname, opts);
+    var localConfigWrapper = ConfigWrapper(configState);
 
-    config.get = getKey;
-    config.set = setKey;
+    config.get = localConfigWrapper.get;
+    config.set = localConfigWrapper.set;
 
     // deprecated: __state, __tree
     config.__state = configState;
 
     return config;
-
-    function getKey(keyPath) {
-        if (!keyPath) {
-            return configState;
-        }
-
-        return getPath(configState, keyPath);
-    }
-
-    function setKey(keyPath, value) {
-        if (typeof keyPath !== 'string' && !Array.isArray(keyPath)) {
-            throw errors.InvalidKeyPath({
-                keyPath: keyPath
-            });
-        }
-
-        var v = getKey(keyPath);
-
-        if (typeof v === 'object' && v !== null) {
-            v = deepExtend({}, v, value);
-        } else {
-            v = value;
-        }
-
-        return putPath(configState, keyPath, v);
-    }
 }
+
