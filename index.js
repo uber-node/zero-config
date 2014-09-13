@@ -5,11 +5,11 @@ var process = require('process');
 var getPath = require('dotty').get;
 var putPath = require('dotty').put;
 var join = require('path').join;
-var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
 var deepExtend = require('deep-extend');
 
 var errors = require('./errors.js');
+var readDatacenter = require('./read-datacenter.js');
 
 module.exports = fetchConfigSync;
 
@@ -27,18 +27,6 @@ function makeDeep(obj) {
     return deepObj;
 }
 
-// break try catch into small function to avoid v8 de-optimization
-function readFileOrError(uri) {
-    var content;
-    try {
-        content = fs.readFileSync(uri, 'utf8');
-    } catch (err) {
-        return [err, null];
-    }
-
-    return [null, content];
-}
-
 function fetchConfigSync(dirname, opts) {
     if (typeof dirname !== 'string' || dirname === '') {
         throw errors.InvalidDirname({
@@ -52,50 +40,22 @@ function fetchConfigSync(dirname, opts) {
     var config = new EventEmitter();
     var cliArgs = parseArgs(opts.argv || process.argv.slice(2));
     var dc = null;
-    // hardcoded to read from `./config` by convention
-    var configFolder = join(dirname, 'config');
     var env = opts.env || process.env;
     var NODE_ENV = env.NODE_ENV;
+    // hardcoded to read from `./config` by convention
+    var configFolder = join(dirname, 'config');
     var blackList = opts.blackList || [];
 
-    // specifying a datacenter is optional in dev but required
-    // in production.
-    if (opts.dc) {
-        var tuple = readFileOrError(opts.dc);
-        if (tuple[0]) {
-            var err = tuple[0];
-            // create error synchronously for correct stack trace
-            var error;
-            if (NODE_ENV === 'production') {
-                error = errors.DatacenterFileRequired({
-                    path: err.path,
-                    errno: err.errno,
-                    code: err.code,
-                    syscall: err.syscall
-                });
-            } else {
-                error = errors.MissingDatacenter({
-                    path: err.path,
-                    errno: err.errno,
-                    code: err.code,
-                    syscall: err.syscall
-                });
-            }
+    var datacenterTuple = readDatacenter(opts);
 
-            // throw error async. this allows for breaking a 
-            // circular dependency between config & logger.
-            process.nextTick(function () {
-                config.emit('error', error);
-            });
-        } else {
-            dc = { 'datacenter': tuple[1].replace(/\s/g, '') };
-        }
-    }
-
-    if (NODE_ENV === 'production' && !opts.dc) {
-        throw errors.DatacenterRequired({
-            strOpts: JSON.stringify(opts)
+    if (datacenterTuple[0]) {
+        // throw error async. this allows for breaking a 
+        // circular dependency between config & logger.
+        process.nextTick(function () {
+            config.emit('error', datacenterTuple[0]);
         });
+    } else {
+        dc = datacenterTuple[1];
     }
 
     // blackList allows you to ensure certain keys from argv
