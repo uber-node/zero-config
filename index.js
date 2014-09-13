@@ -7,48 +7,9 @@ var putPath = require('dotty').put;
 var join = require('path').join;
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
-var TypedError = require('error/typed');
 var deepExtend = require('deep-extend');
 
-var InvalidDirname = TypedError({
-    type: 'missing.dirname.argument',
-    message: 'invalid __dirname argument.\n' +
-        'Must call fetchConfig(__dirname).\n' +
-        '__dirname should be a string and is non-optional.\n' +
-        'instead I got {strDirname}.\n' +
-        'SUGGESTED FIX: update the `fetchConfig()` callsite.\n'
-});
-
-var MissingDatacenter = TypedError({
-    type: 'missing.datacenter.file',
-    warning: true,
-    message: 'no such file or directory \'{path}\'.\n' +
-        'expected to find datacenter configuration at {path}.\n'
-});
-
-var DatacenterRequired = TypedError({
-    type: 'datacenter.option.required',
-    message: 'expected `opts.dc` to be passed to fetchConfig.\n' +
-        'must call `fetchConfig(__dirname, { dc: "..." }).\n' +
-        'instead I got opts: {strOpts}.\n' +
-        '`opts.dc` is not optional when NODE_ENV is "production".\n' +
-        'SUGGESTED FIX: update the `fetchConfig()` callsite.\n'
-});
-
-var DatacenterFileRequired = TypedError({
-    type: 'datacenter.file.required',
-    message: 'no such file or directory \'{path}\'.\n' + 
-        'expected to find datacenter configuration at {path}.\n' +
-        'when NODE_ENV is "production" the datacenter file must exist.\n' +
-        'SUGGESTED FIX: configure your system so it has a datacenter file.\n'
-});
-
-var InvalidKeyPath = TypedError({
-    type: 'invalid.keypath',
-    message: 'specified an invalid keypath to `config.set()`.\n' +
-        'expected a string but instead got {keyPath}.\n' +
-        'SUGGESTED FIX: update the `config.set()` callsite.\n'
-});
+var errors = require('./errors.js');
 
 module.exports = fetchConfigSync;
 
@@ -80,7 +41,7 @@ function readFileOrError(uri) {
 
 function fetchConfigSync(dirname, opts) {
     if (typeof dirname !== 'string' || dirname === '') {
-        throw InvalidDirname({
+        throw errors.InvalidDirname({
             dirname: dirname,
             strDirname: JSON.stringify(dirname)
         });
@@ -106,14 +67,14 @@ function fetchConfigSync(dirname, opts) {
             // create error synchronously for correct stack trace
             var error;
             if (NODE_ENV === 'production') {
-                error = DatacenterFileRequired({
+                error = errors.DatacenterFileRequired({
                     path: err.path,
                     errno: err.errno,
                     code: err.code,
                     syscall: err.syscall
                 });
             } else {
-                error = MissingDatacenter({
+                error = errors.MissingDatacenter({
                     path: err.path,
                     errno: err.errno,
                     code: err.code,
@@ -132,7 +93,7 @@ function fetchConfigSync(dirname, opts) {
     }
 
     if (NODE_ENV === 'production' && !opts.dc) {
-        throw DatacenterRequired({
+        throw errors.DatacenterRequired({
             strOpts: JSON.stringify(opts)
         });
     }
@@ -174,6 +135,8 @@ function fetchConfigSync(dirname, opts) {
 
     config.get = getKey;
     config.set = setKey;
+
+    // deprecated: __state, __tree
     config.__state = configState;
     config.__tree = configTree;
 
@@ -189,7 +152,7 @@ function fetchConfigSync(dirname, opts) {
 
     function setKey(keyPath, value) {
         if (typeof keyPath !== 'string' && !Array.isArray(keyPath)) {
-            throw InvalidKeyPath({
+            throw errors.InvalidKeyPath({
                 keyPath: keyPath
             });
         }
