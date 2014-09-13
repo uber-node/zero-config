@@ -42,9 +42,6 @@ function fetchConfigSync(dirname, opts) {
     config.getRemote = remoteConfigWrapper.get;
     config.setRemote = remoteConfigWrapper.set;
 
-    // deprecated: __state, __tree
-    config.__state = configState;
-
     return config;
 }
 

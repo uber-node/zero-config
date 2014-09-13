@@ -20,7 +20,7 @@ test('fetchConfig can be called as a function', function (assert) {
 
     assert.equal(typeof c, 'object');
     assert.equal(typeof c.get, 'function');
-    assert.equal(typeof c.__state, 'object');
+    assert.equal(typeof c.getRemote, 'function');
     assert.equal(typeof c.on, 'function');
     assert.equal(typeof c.once, 'function');
 
