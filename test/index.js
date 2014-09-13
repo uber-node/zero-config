@@ -358,3 +358,15 @@ test('config.set(weirdValue)', function t(assert) {
 
     assert.end();
 });
+
+test('config.setRemote()', function t(assert) {
+    var config = fetchConfig(__dirname);
+
+    config.setRemote('foo', 'bar');
+
+    assert.deepEqual(config.getRemote(), {
+        'foo': 'bar'
+    });
+
+    assert.end();
+});

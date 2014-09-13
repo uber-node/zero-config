@@ -53,16 +53,21 @@ You can also call the process with
 ### `var config = fetchConfig(dirname, opts)`
 
 ```ocaml
-playdoh-server/config := (dirname: String, opts?: {
+type Keypath : String | Array<String>
+
+zero-config := (dirname: String, opts?: {
     argv?: Array<String>,
     dc?: String,
     blackList?: Array<String>,
     env?: Object<String, String>,
     seed?: Object<String, Any>
 }) => {
-    get: (keypath?: String) => Any,
-    set: (keypath: String, value: Any) => void,
-    __state: Object<String, Any>
+    get: (keypath?: Keypath) => Any,
+    set: ((keypath: Keypath, value: Any) => void) &
+        (value: Any) => void,
+    getRemote: (keypath?: Keypath) => Any,
+    setRemote: ((keypath: Keypath, value: Any) => void) &
+        (value: Any) => void
 }
 ```
 
@@ -213,6 +218,33 @@ You can call `config.get('port')` to get the port value. You
 You can call `config.set("port", 9001)` to set the port value.
   You can call `config.set("playdoh-logger.kafka.port", 9001)` to
   set then nested kafka port config option.
+
+Note you can also call `config.set(entireObject)` to merge an
+  entire object into the `config` instance. This will use 
+  deep extend to set all the key / value pairs in `entireObject`
+  onto the config instance.
+
+#### `var value = config.getRemote(keypath)`
+
+The same as `config.get()` but gets from a different in memory
+  object then `config.get()`.
+
+It's recommended that you use `config.get()` and `config.set()`
+  for any local configuration that is static and effectively
+  immutable after process startup.
+
+You can use `config.getRemote()` and `config.setRemote()` for
+  any dynamic configuration that is effectively controlled
+  remotely outside your program.
+
+#### `config.setRemote(keypath, value)`
+
+The same as `config.set()` but sets to a different in memory
+  objec then `config.set()`.
+
+You can use `config.getRemote()` and `config.setRemote()` for
+  any dynamic configuration that is effectively controlled
+  remotely outside your program.
 
 ## Installation
 
