@@ -11,7 +11,7 @@ function getConfigState(dirname, opts) {
     var env = opts.env || process.env;
     var NODE_ENV = env.NODE_ENV;
     var dc = opts.datacenterValue;
-    var blackList = opts.blackList || [];
+    var blackList = opts.blackList || ['_'];
 
     // hardcoded to read from `./config` by convention
     var configFolder = join(dirname, 'config');
