@@ -21,7 +21,11 @@ function ConfigWrapper(configObject) {
     }
 
     function setKey(keyPath, value) {
-        if (typeof keyPath !== 'string' && !Array.isArray(keyPath)) {
+        if (arguments.length === 1) {
+            return multiSet(keyPath);
+        }
+
+        if (!isValidKeyPath(keyPath)) {
             throw errors.InvalidKeyPath({
                 keyPath: keyPath
             });
@@ -37,4 +41,24 @@ function ConfigWrapper(configObject) {
 
         return putPath(configObject, keyPath, v);
     }
+
+    function multiSet(obj) {
+        if (obj === null || typeof obj !== 'object') {
+            throw errors.InvalidMultiSetArgument({
+                objStr: JSON.stringify(obj),
+                obj: obj
+            });
+        }
+
+        Object.keys(obj).forEach(setEachKey);
+
+        function setEachKey(key) {
+            setKey([key], obj[key]);
+        }
+    }
+}
+
+function isValidKeyPath(keyPath) {
+    return typeof keyPath === 'string' ||
+        Array.isArray(keyPath);
 }

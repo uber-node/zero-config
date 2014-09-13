@@ -40,10 +40,21 @@ var InvalidKeyPath = TypedError({
         'SUGGESTED FIX: update the `config.set()` callsite.\n'
 });
 
+var InvalidMultiSetArgument = TypedError({
+    type: 'invalid.multi.set',
+    message: 'Invalid `config.set(obj)` argument.\n' +
+        'expected an object but instead got {objStr}.\n' +
+        'SUGGESTED FIX: update the `config.set()` callsite to ' +
+            'be a valid object.\n',
+    objStr: null,
+    obj: null
+});
+
 module.exports = {
     InvalidDirname: InvalidDirname,
     MissingDatacenter: MissingDatacenter,
     DatacenterRequired: DatacenterRequired,
     DatacenterFileRequired: DatacenterFileRequired,
-    InvalidKeyPath: InvalidKeyPath
+    InvalidKeyPath: InvalidKeyPath,
+    InvalidMultiSetArgument: InvalidMultiSetArgument
 };
