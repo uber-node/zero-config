@@ -4,18 +4,6 @@ var errors = require('./errors.js');
 
 module.exports = readDatacenter;
 
-// break try catch into small function to avoid v8 de-optimization
-function readFileOrError(uri) {
-    var content;
-    try {
-        content = fs.readFileSync(uri, 'utf8');
-    } catch (err) {
-        return [err, null];
-    }
-
-    return [null, content];
-}
-
 function readDatacenter(opts) {
     var env = opts.env || process.env;
     var NODE_ENV = env.NODE_ENV;
@@ -60,4 +48,16 @@ function readDatacenter(opts) {
     }
 
     return [error, result];
+}
+
+// break try catch into small function to avoid v8 de-optimization
+function readFileOrError(uri) {
+    var content;
+    try {
+        content = fs.readFileSync(uri, 'utf8');
+    } catch (err) {
+        return [err, null];
+    }
+
+    return [null, content];
 }
