@@ -20,7 +20,7 @@ test('fetchConfig can be called as a function', function (assert) {
 
     assert.equal(typeof c, 'object');
     assert.equal(typeof c.get, 'function');
-    assert.equal(typeof c.__state, 'object');
+    assert.equal(typeof c.getRemote, 'function');
     assert.equal(typeof c.on, 'function');
     assert.equal(typeof c.once, 'function');
 
@@ -295,7 +295,7 @@ test('config.set(undefined) throws', function (assert) {
     var config = fetchConfig(__dirname);
 
     assert.throws(function () {
-        config.set(undefined);
+        config.set(undefined, 42);
     }, /invalid keypath/);
 
     assert.end();
@@ -323,6 +323,70 @@ test('config({ seed: seed })', function (assert) {
     assert.equal(config.get('baz.lulz'), 42);
     assert.equal(config.get('baz.foob'), 'thingy');
     assert.equal(config.get('bar'), 'foo');
+
+    assert.end();
+});
+
+test('config.set(entireObj)', function t(assert) {
+    var config = fetchConfig(__dirname);
+
+    config.set('foo', 'bar');
+    config.set('baz', { 42: 42 });
+
+    assert.equal(config.get('foo'), 'bar');
+    assert.deepEqual(config.get('baz'), { '42': 42 });
+
+    config.set({
+        foo: 'new-key',
+        baz: { 50: 50 },
+        other: 'thing'
+    });
+
+    assert.equal(config.get('foo'), 'new-key');
+    assert.deepEqual(config.get('baz'), { '42': 42, '50': 50 });
+    assert.equal(config.get('other'), 'thing');
+
+    assert.end();
+});
+
+test('config.set(weirdValue)', function t(assert) {
+    var config = fetchConfig(__dirname);
+
+    assert.throws(function () {
+        config.set(42);
+    }, /Invalid `config\.set\(obj\)` argument/);
+
+    assert.end();
+});
+
+test('config.setRemote()', function t(assert) {
+    var config = fetchConfig(__dirname);
+
+    config.setRemote('foo', 'bar');
+
+    assert.deepEqual(config.getRemote(), {
+        'foo': 'bar'
+    });
+
+    assert.end();
+});
+
+test('config.freeze()', function t(assert) {
+    var config = fetchConfig(__dirname);
+
+    config.set('foo', 'bar');
+
+    assert.equal(config.get('foo'), 'bar');
+
+    config.freeze();
+
+    assert.throws(function () {
+        config.set('foo', 'baz');
+    }, /Config is frozen/);
+
+    assert.throws(function () {
+        config.set('bar', 'baz');
+    }, /Config is frozen/);
 
     assert.end();
 });
