@@ -16,7 +16,7 @@
     "deep-extend": "^0.2.11",
     "dotty": "0.0.2",
     "error": "^4.1.1",
-    "flatten-prototypes": "^2.0.1",
+    "flatten-prototypes": "^3.0.0",
     "minimist": "^1.1.0",
     "process": "^0.7.0"
   },
