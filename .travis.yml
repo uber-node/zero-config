@@ -3,5 +3,5 @@ node_js:
   - "0.8"
   - "0.10"
   - "0.11"
-before_install: npm i npm@latest -g
+before_install: npm i npm@~1.4.6 -g
 script: npm run travis
