@@ -341,6 +341,7 @@ test('config({ defaults: defaults })', function (assert) {
                 lulz: 42
             },
             bar: 'foo',
+            shouldBeUndefined: undefined,
             shouldBeOverwritten: 'overwrittenValue',
             shouldBeMerged: {
                 deep: {
@@ -349,6 +350,7 @@ test('config({ defaults: defaults })', function (assert) {
             }
         },
         defaults: {
+            shouldBeUndefined: 'defined',
             shouldBeFalse: false,
             shouldBeTrue: true,
             shouldBeNested: {
@@ -366,6 +368,7 @@ test('config({ defaults: defaults })', function (assert) {
     assert.equal(config.get('foo'), 'bar');
     assert.equal(config.get('baz.lulz'), 42);
     assert.equal(config.get('baz.foob'), 'thingy');
+    assert.equal(config.get('shouldBeUndefined'), undefined);
     assert.equal(config.get('shouldBeFalse'), false);
     assert.equal(config.get('shouldBeTrue'), true);
     assert.equal(config.get('shouldBeNested.key'), 'value');
