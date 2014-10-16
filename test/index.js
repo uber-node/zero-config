@@ -327,6 +327,55 @@ test('config({ seed: seed })', function (assert) {
     assert.end();
 });
 
+test('config({ defaults: defaults })', function (assert) {
+    var argv = [
+        '--foo', 'bar',
+        '--baz.lulz', 'some value',
+        '--baz.foob', 'thingy'
+    ];
+
+    var config = fetchConfig(__dirname, {
+        argv: argv,
+        seed: {
+            baz: {
+                lulz: 42
+            },
+            bar: 'foo',
+            shouldBeOverwritten: 'overwrittenValue',
+            shouldBeMerged: {
+                deep: {
+                    foo: 'bar'
+                }
+            }
+        },
+        defaults: {
+            shouldBeFalse: false,
+            shouldBeTrue: true,
+            shouldBeNested: {
+                key: 'value'
+            },
+            shouldBeOverwritten: 'value',
+            shouldBeMerged: {
+                deep: {
+                    bar: 'baz'
+                }
+            }
+        }
+    });
+
+    assert.equal(config.get('foo'), 'bar');
+    assert.equal(config.get('baz.lulz'), 42);
+    assert.equal(config.get('baz.foob'), 'thingy');
+    assert.equal(config.get('shouldBeFalse'), false);
+    assert.equal(config.get('shouldBeTrue'), true);
+    assert.equal(config.get('shouldBeNested.key'), 'value');
+    assert.equal(config.get('shouldBeOverwritten'), 'overwrittenValue');
+    assert.equal(config.get('shouldBeMerged.deep.foo'), 'bar');
+    assert.equal(config.get('shouldBeMerged.deep.bar'), 'baz');
+
+    assert.end();
+});
+
 test('config.set(entireObj)', function t(assert) {
     var config = fetchConfig(__dirname);
 
