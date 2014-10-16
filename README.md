@@ -211,7 +211,7 @@ This is an alternative to the `NODE_ENV=test `pattern, we highly
 `opts.defaults` is optional, it can be set to an object.
 
 If it exists, it will populate all the values that are unset 
-  (but not undefined) in the locaded config with those in 
+  (but not undefined) in the loaded config with those in 
   `opts.defaults`.
 
 The difference between `defaults` and `seed` is that `seed` over-
