@@ -1,5 +1,6 @@
 var process = require('process');
 var EventEmitter = require('events').EventEmitter;
+var Result = require('raynos-rust-result');
 
 var errors = require('./errors.js');
 var readDatacenter = require('./read-datacenter.js');
@@ -21,16 +22,17 @@ function fetchConfigSync(dirname, opts) {
     // config is EventEmitter purely for `.emit('error', err)`
     var config = new EventEmitter();
 
-    var datacenterTuple = readDatacenter(opts);
+    var result = readDatacenter(opts);
 
-    if (datacenterTuple[0]) {
+    if (Result.isErr(result)) {
+        var err = Result.Err(result);
         // throw error async. this allows for breaking a 
         // circular dependency between config & logger.
         process.nextTick(function () {
-            config.emit('error', datacenterTuple[0]);
+            config.emit('error', err);
         });
     } else {
-        opts.datacenterValue = datacenterTuple[1];
+        opts.datacenterValue = Result.Ok(result);
     }
 
     var configState = getConfigState(dirname, opts);
