@@ -60,7 +60,8 @@ zero-config := (dirname: String, opts?: {
     dc?: String,
     blackList?: Array<String>,
     env?: Object<String, String>,
-    seed?: Object<String, Any>
+    seed?: Object<String, Any>,
+    defaults?: Object<String, Any>
 }) => {
     get: (keypath?: Keypath) => Any,
     set: ((keypath: Keypath, value: Any) => void) &
@@ -107,6 +108,8 @@ Below are the sources it reads in order of least precendence.
     you pass `--foo='bar' --bar.baz='bob'` you will get
     `{ "foo": "bar", "bar": { "baz": "bob" } }`
  - a seed object of manual overwrites for testing purposes.
+ - a defaults object that populates values that have 
+    not been set by any other means.
 
 The config loader also uses `config-chain` for the actual
   loading logic so you can read [their docs][config-chain]
@@ -202,6 +205,17 @@ The `seed` option is very useful for testing purposes, it allows
 
 This is an alternative to the `NODE_ENV=test `pattern, we highly
   recommend that you do not have a `test.json` file at all.
+
+#### `opts.defaults`
+
+`opts.defaults` is optional, it can be set to an object.
+
+If it exists, it will populate all the values that are unset 
+  (but not undefined) in the loaded config with those in 
+  `opts.defaults`.
+
+The difference between `defaults` and `seed` is that `seed` over-
+  writes set values, while `defaults` does not.
 
 #### `var value = config.get(keypath)`
 

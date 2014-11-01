@@ -43,7 +43,9 @@ function getConfigState(dirname, opts) {
         // load ./config/NODE_ENV.json
         NODE_ENV ? join(configFolder, NODE_ENV + '.json') : null,
         // load ./config/common.json
-        join(configFolder, 'common.json')
+        join(configFolder, 'common.json'),
+        // load defaults
+        opts.defaults || null
     );
 
     // there is a "bug" in config-chain where it doesn't 
