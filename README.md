@@ -58,7 +58,7 @@ type Keypath : String | Array<String>
 
 zero-config := (dirname: String, opts?: {
     argv?: Array<String>,
-    dc?: String,
+    dcValue?: String,
     blackList?: Array<String>,
     env?: Object<String, String>,
     seed?: Object<String, Any>,
@@ -133,15 +133,14 @@ If you require `fetchConfig` anywhere else like `./api/server.js`
 **Note** that `opts` is only optional in environments other then
   `"production`". If your `process.env.NODE_ENV` is set to
   `"production"` then you **MUST** specifiy `opts` and specify
-  the `opts.dc` parameter.
+  the `opts.dcValue` parameter.
 
 Running a production service without knowing how to load 
   datacenter specific configuration is a bug.
 
-#### `opts.dc`
+#### `opts.dcValue`
 
-`opts.dc` is either `null` or a string path to a file that 
-  contains the name of the datacenter.
+`opts.dcValue` is either `null` or a datacenter name.
 
 Say you have two datacenters, EC2-west and EC2-east. It's 
   recommended that you have a file called `/etc/datacenter`
@@ -149,6 +148,9 @@ Say you have two datacenters, EC2-west and EC2-east. It's
 
 This way any service can know what datacenter it is running
   in with a simple `cat /etc/datacenter`.
+
+You can then call `fetchConfig(...)` with the datacenter value
+  by calling `fs.readFileSync('/etc/datacenter')`
 
 Note that if you pass the dc config to `fetchConfig` then the
   config object will contain the `"datacenter"` key whose value
