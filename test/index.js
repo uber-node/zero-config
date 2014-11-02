@@ -137,6 +137,43 @@ test('config loads from datacenter file', withFixtures(__dirname, {
     assert.end();
 }));
 
+test('config loads from dcValue', withFixtures(__dirname, {
+    'config': {
+        'common.json': JSON.stringify({
+            a: 'a',
+            b: {
+                c: 'c',
+                d: 'd'
+            }
+        }),
+        'production.json': JSON.stringify({
+            b: {
+                c: 'c2'
+            }
+        }),
+        'production.peak1.json': JSON.stringify({
+            a: 'a3'
+        })
+    }
+}, function (assert) {
+    var env = {
+        'NODE_ENV': 'production'
+    };
+
+    var config = fetchConfig(__dirname, {
+        env: env,
+        dcValue: 'peak1'
+    });
+
+    assert.equal(config.get('datacenter'), 'peak1');
+    assert.equal(config.get('a'), 'a3');
+    assert.equal(config.get('b.c'), 'c2');
+    assert.equal(config.get('b.d'), 'd');
+    assert.deepEqual(config.get('b'), { c: 'c2', d: 'd' });
+
+    assert.end();
+}));
+
 test('config reads a datacenter file', withFixtures(__dirname, {
     datacenter: 'peak1'
 }, function (assert) {
@@ -201,7 +238,7 @@ test('will load from --config', withFixtures(__dirname, {
     assert.end();
 }));
 
-test('no opts.dc in production', function (assert) {
+test('no opts.dcValue in production', function (assert) {
     var err = catchFn(function () {
         fetchConfig(__dirname, {
             env: { NODE_ENV: 'production' }
@@ -210,8 +247,8 @@ test('no opts.dc in production', function (assert) {
 
     assert.ok(err);
     assert.equal(err.type, 'datacenter.option.required');
-    assert.ok(/expected `opts.dc`/.test(err.message));
-    assert.ok(/`opts.dc` is not optional/.test(err.message));
+    assert.ok(/expected `opts.dcValue`/.test(err.message));
+    assert.ok(/`opts.dcValue` is not optional/.test(err.message));
 
     assert.end();
 });

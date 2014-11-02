@@ -31,12 +31,13 @@ A zero configuration configuration loader
 
 ```js
 // server.js
+var fs = require('fs');
 var fetchConfig = require('playdoh-server/config')
 
-var NODE_ENV = process.env.NODE_ENV
 var config = fetchConfig(__dirname, {
-    dc: NODE_ENV === 'production' ?
-        '/etc/playdoh/datacenter' : null
+    dcValue: fs.existsSync('/etc/zero-config/datacenter') ?
+        fs.readFileSync('/etc/zero-config/datacenter', 'utf8') :
+        null
 })
 
 var port = config.get("port")

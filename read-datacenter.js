@@ -9,7 +9,9 @@ function readDatacenter(opts) {
     var env = opts.env || process.env;
     var NODE_ENV = env.NODE_ENV;
 
-    if (NODE_ENV === 'production' && !opts.dc) {
+    // specifying a datacenter is optional in dev but required
+    // in production.
+    if (NODE_ENV === 'production' && !opts.dc && !opts.dcValue) {
         throw errors.DatacenterRequired({
             strOpts: JSON.stringify(opts)
         });
@@ -17,9 +19,11 @@ function readDatacenter(opts) {
 
     var result;
 
-    // specifying a datacenter is optional in dev but required
-    // in production.
-    if (opts.dc) {
+    if (opts.dcValue) {
+        result = Result.Ok({
+            'datacenter': opts.dcValue.replace(/\s/g, '')
+        });
+    } else if (opts.dc) {
         var fileResult = readFileOrError(opts.dc);
         if (Result.isErr(fileResult)) {
             var err = Result.Err(fileResult);
