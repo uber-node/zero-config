@@ -1,4 +1,5 @@
 var fs = require('fs');
+var Result = require('raynos-rust-result');
 
 var errors = require('./errors.js');
 
@@ -8,46 +9,51 @@ function readDatacenter(opts) {
     var env = opts.env || process.env;
     var NODE_ENV = env.NODE_ENV;
 
-    if (NODE_ENV === 'production' && !opts.dc) {
+    // specifying a datacenter is optional in dev but required
+    // in production.
+    if (NODE_ENV === 'production' && !opts.dc && !opts.dcValue) {
         throw errors.DatacenterRequired({
             strOpts: JSON.stringify(opts)
         });
     }
 
-    var result, error = null;
+    var result;
 
-    // specifying a datacenter is optional in dev but required
-    // in production.
-    if (opts.dc) {
-        var tuple = readFileOrError(opts.dc);
-        if (tuple[0]) {
-            var err = tuple[0];
+    if (opts.dcValue) {
+        result = Result.Ok({
+            'datacenter': opts.dcValue.replace(/\s/g, '')
+        });
+    } else if (opts.dc) {
+        var fileResult = readFileOrError(opts.dc);
+        if (Result.isErr(fileResult)) {
+            var err = Result.Err(fileResult);
             // create error synchronously for correct stack trace
             if (NODE_ENV === 'production') {
-                error = errors.DatacenterFileRequired({
+                result = Result.Err(errors.DatacenterFileRequired({
                     path: err.path,
                     errno: err.errno,
                     code: err.code,
                     syscall: err.syscall
-                });
+                }));
             } else {
-                error = errors.MissingDatacenter({
+                result = Result.Err(errors.MissingDatacenter({
                     path: err.path,
                     errno: err.errno,
                     code: err.code,
                     syscall: err.syscall
-                });
+                }));
             }
         } else {
-            result = {
-                'datacenter': tuple[1].replace(/\s/g, '')
-            };
+            result = Result.Ok({
+                'datacenter': Result.Ok(fileResult)
+                    .replace(/\s/g, '')
+            });
         }
     } else {
-        result = null;
+        result = Result.Ok(null);
     }
 
-    return [error, result];
+    return result;
 }
 
 // break try catch into small function to avoid v8 de-optimization
@@ -56,8 +62,8 @@ function readFileOrError(uri) {
     try {
         content = fs.readFileSync(uri, 'utf8');
     } catch (err) {
-        return [err, null];
+        return Result.Err(err);
     }
 
-    return [null, content];
+    return Result.Ok(content);
 }

@@ -18,10 +18,10 @@ var MissingDatacenter = TypedError({
 
 var DatacenterRequired = TypedError({
     type: 'datacenter.option.required',
-    message: 'expected `opts.dc` to be passed to fetchConfig.\n' +
-        'must call `fetchConfig(__dirname, { dc: "..." }).\n' +
+    message: 'expected `opts.dcValue` to be passed to fetchConfig.\n' +
+        'must call `fetchConfig(__dirname, { dcValue: "..." }).\n' +
         'instead I got opts: {strOpts}.\n' +
-        '`opts.dc` is not optional when NODE_ENV is "production".\n' +
+        '`opts.dcValue` is not optional when NODE_ENV is "production".\n' +
         'SUGGESTED FIX: update the `fetchConfig()` callsite.\n'
 });
 
