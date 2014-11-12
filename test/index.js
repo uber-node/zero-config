@@ -416,6 +416,89 @@ test('config({ defaults: defaults })', function (assert) {
     assert.end();
 });
 
+test('config({ replacements: replacements})', withFixtures(__dirname, {
+    config: {
+        'development.json': JSON.stringify({
+            someKey: 'foo.bar',
+            nested: {
+                key: 'panic'
+            }
+        })
+    }
+}, function (assert) {
+    var env = {
+        'NODE_ENV': 'development'
+    };
+
+    // Utilities for tests
+    function fetchPartial(env){
+        return function(replacements){
+            return fetchConfig(__dirname, {
+                env: env,
+                replacements: replacements
+            });
+        };
+    }
+    var fetchWithReplacements = fetchPartial(env);
+
+    // Simple string replace
+    var replacements = [{
+        from: 'bar',
+        to: 'baz'
+    }];
+    var config = fetchWithReplacements(replacements);
+    assert.equal(config.get('someKey'), 'foo.baz');
+
+    // Regex replacement
+    replacements = [{
+        from: /([a-z]+)/,
+        to: 'dont $1'
+    }];
+    config = fetchWithReplacements(replacements);
+    assert.equal(config.get('nested.key'), 'dont panic');
+
+    // Multiple distinct replacements
+    replacements = [{
+        from: 'bar',
+        to: 'qux'
+    },{
+        from: 'panic',
+        to: 'do panic'
+    }];
+    config = fetchWithReplacements(replacements);
+    assert.equal(config.get('someKey'), 'foo.qux');
+    assert.equal(config.get('nested.key'), 'do panic');
+
+    // Multiple consecutive replacements
+    replacements = [{
+        from: 'bar',
+        to: 'foo'
+    },{
+        from: /foo/g,
+        to: 'wat'
+    }];
+    config = fetchWithReplacements(replacements);
+    assert.equal(config.get('someKey'), 'wat.wat');
+    assert.equal(config.get('nested.key'), 'panic');
+
+    assert.end();
+}));
+
+test('config({ replacements: malformed})', function t(assert){
+    var replacements = {
+        to: 'this is',
+        from: 'not valid'
+    };
+
+    var loadConfig = function(){
+        fetchConfig(__dirname, {
+            replacements: replacements
+        });
+    };
+    assert.throws(loadConfig);
+    assert.end();
+});
+
 test('config.set(entireObj)', function t(assert) {
     var config = fetchConfig(__dirname);
 

@@ -19,7 +19,8 @@
     "flatten-prototypes": "^3.0.0",
     "minimist": "^1.1.0",
     "process": "^0.7.0",
-    "raynos-rust-result": "0.1.0-improvement3"
+    "raynos-rust-result": "0.1.0-improvement3",
+    "traverse": "~0.6.6"
   },
   "devDependencies": {
     "coveralls": "^2.10.0",
