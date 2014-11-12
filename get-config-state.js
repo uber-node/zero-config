@@ -87,7 +87,7 @@ function runReplacements(configObject, replacements){
             if(!replacement.from || !replacement.to){
                 throw new Error('Invalid replacements configuration');
             }
-            self.update(node.replace(replacement.from, replacement.to));
+            self.update(self.node.replace(replacement.from, replacement.to));
         });
     });
     return newObj;
