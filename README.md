@@ -31,8 +31,8 @@ A zero configuration configuration loader
 
 ```js
 // server.js
-var fs = require('fs');
-var fetchConfig = require('playdoh-server/config')
+var fs = require('fs')
+var fetchConfig = require('zero-config')
 
 var config = fetchConfig(__dirname, {
     dcValue: fs.existsSync('/etc/zero-config/datacenter') ?
