@@ -31,7 +31,7 @@ A zero configuration configuration loader
 
 ```js
 // server.js
-var fs = require('fs');
+var fs = require('fs')
 var fetchConfig = require('zero-config')
 
 var config = fetchConfig(__dirname, {
