@@ -11,6 +11,7 @@ function ConfigWrapper(configObject) {
 
     return {
         get: getKey,
+        strictGet: strictGetKey,
         set: setKey,
         freeze: freeze
     };
@@ -21,6 +22,16 @@ function ConfigWrapper(configObject) {
         }
 
         return getPath(configObject, keyPath);
+    }
+
+    function strictGetKey(keyPath){
+        var value = getKey(keyPath);
+
+        if (value){
+            return value;
+        }
+
+        throw errors.NonexistantKeyPath();
     }
 
     function setKey(keyPath, value) {

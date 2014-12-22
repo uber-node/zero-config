@@ -90,6 +90,10 @@ It returns you a `config` object with a `get(keypath)` method
 It's recommended you use `.get()` as in the future we will 
   enable dynamic config properties through flipr support.
 
+In addition to `get()` there is a strictGet() method which will
+  throw an error should you try to get a non-existant keypath.
+  This avoids unknowingly using undefined config values.
+
 ### The config lookup algorithm
 
 The `fetchConfig()` function tries to fetch config from multiple

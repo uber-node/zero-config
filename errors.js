@@ -25,6 +25,12 @@ var DatacenterRequired = TypedError({
         'SUGGESTED FIX: update the `fetchConfig()` callsite.\n'
 });
 
+var NonexistantKeyPath = TypedError({
+    type: 'nonexistant.key.path',
+    message: 'attempting to get a nonexistant keyPath.\n' +
+    'SUGGESTED FIX: add keyPath and value to config`'
+});
+
 var DatacenterFileRequired = TypedError({
     type: 'datacenter.file.required',
     message: 'no such file or directory \'{path}\'.\n' + 
@@ -69,6 +75,7 @@ module.exports = {
     DatacenterRequired: DatacenterRequired,
     DatacenterFileRequired: DatacenterFileRequired,
     InvalidKeyPath: InvalidKeyPath,
+    NonexistantKeyPath: NonexistantKeyPath,
     InvalidMultiSetArgument: InvalidMultiSetArgument,
     SetFrozenObject: SetFrozenObject
 };

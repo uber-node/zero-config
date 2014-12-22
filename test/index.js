@@ -91,6 +91,11 @@ test('config loads config files', withFixtures(__dirname, {
     assert.equal(config.get('someKey'), 'ok');
     assert.equal(config.get('freeKey'), 'nice');
     assert.notEqual(config.get('awsKey'), 'ABC123DEF');
+    assert.equal(config.strictGet('freeKey'), 'nice');
+    assert.equal(config.strictGet('nested.shadowed'), ':)');
+    assert.throws(function() {
+        config.strictGet('fakeKey');
+    }, /nonexistant keyPath/);
 
     var conf = config.get();
     assert.equal(conf.someKey, 'ok');
@@ -390,6 +395,8 @@ test('config.set()', function (assert) {
     assert.equal(config.get('nested.key3'), 'value3', 'child nested key');
     assert.equal(config.get('nested.key4'), 'value4', 'array key');
     assert.equal(config.get(['nested', 'key.with.dots5']),
+        'value5', 'array key with dots');
+    assert.equal(config.strictGet(['nested', 'key.with.dots5']),
         'value5', 'array key with dots');
 
     assert.end();
