@@ -29,10 +29,11 @@ function ConfigWrapper(configObject) {
         }
 
         var value = getKey(keyPath);
+        var strictMode = !getKey('loose');
 
-        if (value === undefined && !getKey('loose')) {
+        if (value === undefined && strictMode) {
             throw errors.NonexistantKeyPath();
-       }
+        }
 
         return value;
     }
