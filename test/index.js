@@ -151,6 +151,51 @@ test('env case gets normalized', withFixtures(__dirname, {
     assert.end();
 }));
 
+test('error thrown when not in loose mode', withFixtures(__dirname, {
+    config: {
+         'common.json': JSON.stringify({
+            port: 3000,
+            nested: {
+                key: true,
+                shadowed: ':('
+            },
+            freeKey: 'nice'
+        }),
+        'test.json': JSON.stringify({
+            port: 4000,
+            someKey: 'ok',
+            nested: {
+                extra: 40,
+                shadowed: ':)'
+            }
+        })
+    }
+}, function (assert) {
+    var env = {
+        'NODE_ENV': 'test'
+    };
+
+    var config = fetchConfig(__dirname, {env: env});
+
+    assert.equal(config.get('freeKey'), 'nice');
+    assert.throws(function() {
+        config.get('fakeKey');
+    }, /nonexistant keyPath/);
+
+    var conf = config.get();
+    assert.equal(conf.someKey, 'ok');
+    assert.equal(conf.freeKey, 'nice');
+    assert.equal(conf.port, 4000);
+    assert.deepEqual(conf.nested, {
+        key: true,
+        shadowed: ':)',
+        extra: 40
+    });
+
+    assert.end();
+}));
+
+
 test('env config files take presidence', withFixtures(__dirname, {
     config: {
         'common.json': JSON.stringify({

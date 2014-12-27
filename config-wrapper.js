@@ -32,7 +32,9 @@ function ConfigWrapper(configObject, loose) {
         var strictMode = !loose;
 
         if (value === undefined && strictMode) {
-            throw errors.NonexistantKeyPath();
+            throw errors.NonexistantKeyPath(({
+                keyPath: keyPath
+            }));
         }
 
         return value;
