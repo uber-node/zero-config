@@ -83,10 +83,9 @@ test('config loads config files', withFixtures(__dirname, {
     };
 
     var config = fetchConfig(__dirname, {
-        env: env,
-        loose: true
-     });
-
+            env: env,
+            loose: true
+        });
     assert.equal(config.get('port'), 4000);
     assert.equal(config.get('nested.key'), true);
     assert.equal(config.get('nested.shadowed'), ':)');
@@ -96,6 +95,8 @@ test('config loads config files', withFixtures(__dirname, {
     assert.notEqual(config.get('awsKey'), 'ABC123DEF');
     assert.equal(config.get('freeKey'), 'nice');
     assert.equal(config.get('nested.shadowed'), ':)');
+    assert.equal(config.get('fakeKey', undefined));
+
 
     var conf = config.get();
     assert.equal(conf.someKey, 'ok');
