@@ -10,8 +10,7 @@ function ConfigWrapper(configObject) {
     var frozen = false;
 
     return {
-        get: getKey,
-        strictGet: strictGetKey,
+        get: configuredGet,
         set: setKey,
         freeze: freeze
     };
@@ -24,14 +23,18 @@ function ConfigWrapper(configObject) {
         return getPath(configObject, keyPath);
     }
 
-    function strictGetKey(keyPath){
-        var value = getKey(keyPath);
-
-        if (value){
-            return value;
+    function configuredGet(keyPath){
+        if (!keyPath){
+            return getKey();
         }
 
-        throw errors.NonexistantKeyPath();
+        var value = getKey(keyPath);
+
+        if (value === undefined && !getKey('loose')) {
+            throw errors.NonexistantKeyPath();
+       }
+
+        return value;
     }
 
     function setKey(keyPath, value) {

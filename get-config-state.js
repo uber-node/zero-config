@@ -11,6 +11,9 @@ function getConfigState(dirname, opts) {
     var env = opts.env || process.env;
     var NODE_ENV = env.NODE_ENV;
     var dc = opts.datacenterValue;
+    var loose = {
+        loose: opts.loose
+    };
     var blackList = opts.blackList || ['_'];
 
     // hardcoded to read from `./config` by convention
@@ -30,6 +33,8 @@ function getConfigState(dirname, opts) {
     var configTree = configChain(
         // the seed option overwrites everything
         opts.seed || null,
+        // include loose settings for get function
+        loose,
         // include all CLI arguments
         makeDeep(cliArgs),
         // load file from --config someFilePath
