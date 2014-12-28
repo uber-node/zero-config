@@ -6,12 +6,11 @@ var errors = require('./errors.js');
 
 module.exports = ConfigWrapper;
 
-function ConfigWrapper(configObject) {
+function ConfigWrapper(configObject, loose) {
     var frozen = false;
 
     return {
-        get: getKey,
-        strictGet: strictGetKey,
+        get: configuredGet,
         set: setKey,
         freeze: freeze
     };
@@ -24,14 +23,19 @@ function ConfigWrapper(configObject) {
         return getPath(configObject, keyPath);
     }
 
-    function strictGetKey(keyPath){
-        var value = getKey(keyPath);
-
-        if (value){
-            return value;
+    function configuredGet(keyPath){
+        if (!keyPath){
+            return getKey();
         }
 
-        throw errors.NonexistantKeyPath();
+        var value = getKey(keyPath);
+        var strictMode = !loose;
+
+        if (value === undefined && strictMode) {
+            throw errors.NonexistantKeyPath();
+        }
+
+        return value;
     }
 
     function setKey(keyPath, value) {

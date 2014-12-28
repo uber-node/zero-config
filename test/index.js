@@ -82,7 +82,10 @@ test('config loads config files', withFixtures(__dirname, {
         'NODE_ENV': 'test'
     };
 
-    var config = fetchConfig(__dirname, { env: env });
+    var config = fetchConfig(__dirname, {
+        env: env,
+        loose: true
+     });
 
     assert.equal(config.get('port'), 4000);
     assert.equal(config.get('nested.key'), true);
@@ -91,11 +94,8 @@ test('config loads config files', withFixtures(__dirname, {
     assert.equal(config.get('someKey'), 'ok');
     assert.equal(config.get('freeKey'), 'nice');
     assert.notEqual(config.get('awsKey'), 'ABC123DEF');
-    assert.equal(config.strictGet('freeKey'), 'nice');
-    assert.equal(config.strictGet('nested.shadowed'), ':)');
-    assert.throws(function() {
-        config.strictGet('fakeKey');
-    }, /nonexistant keyPath/);
+    assert.equal(config.get('freeKey'), 'nice');
+    assert.equal(config.get('nested.shadowed'), ':)');
 
     var conf = config.get();
     assert.equal(conf.someKey, 'ok');
@@ -358,7 +358,8 @@ test('no opts.dcValue in production', function (assert) {
 test('blackList feature', function (assert) {
     var config = fetchConfig(__dirname, {
         blackList: ['foo', 'bar'],
-        argv: ['--foo', 'foo', '--bar', 'bar', '--baz', 'baz']
+        argv: ['--foo', 'foo', '--bar', 'bar', '--baz', 'baz'],
+        loose: true
     });
 
     assert.equal(config.get('foo'), undefined);
@@ -371,7 +372,8 @@ test('blackList feature', function (assert) {
 test('blackList unset keys do not break', function (assert) {
     var config = fetchConfig(__dirname, {
         blackList: ['foo', 'bar'],
-        argv: ['--baz', 'baz']
+        argv: ['--baz', 'baz'],
+        loose: true
     });
 
     assert.equal(config.get('foo'), undefined);
@@ -395,8 +397,6 @@ test('config.set()', function (assert) {
     assert.equal(config.get('nested.key3'), 'value3', 'child nested key');
     assert.equal(config.get('nested.key4'), 'value4', 'array key');
     assert.equal(config.get(['nested', 'key.with.dots5']),
-        'value5', 'array key with dots');
-    assert.equal(config.strictGet(['nested', 'key.with.dots5']),
         'value5', 'array key with dots');
 
     assert.end();
@@ -503,7 +503,8 @@ test('config({ defaults: defaults })', function (assert) {
                     bar: 'baz'
                 }
             }
-        }
+        },
+        loose: true
     });
 
     assert.equal(config.get('foo'), 'bar');
