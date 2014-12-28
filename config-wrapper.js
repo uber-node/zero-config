@@ -6,7 +6,7 @@ var errors = require('./errors.js');
 
 module.exports = ConfigWrapper;
 
-function ConfigWrapper(configObject) {
+function ConfigWrapper(configObject, loose) {
     var frozen = false;
 
     return {
@@ -29,7 +29,7 @@ function ConfigWrapper(configObject) {
         }
 
         var value = getKey(keyPath);
-        var strictMode = !getKey('loose');
+        var strictMode = !loose;
 
         if (value === undefined && strictMode) {
             throw errors.NonexistantKeyPath();
