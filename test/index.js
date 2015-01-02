@@ -131,7 +131,7 @@ test('error thrown when not in loose mode', withFixtures(__dirname, {
     assert.equal(config.get('freeKey'), 'nice');
     assert.throws(function() {
         config.get('fakeKey');
-    }, /nonexistant keyPath/);
+    }, /key in ZeroConfig that does not exist/);
 
     var conf = config.get();
     assert.equal(conf.someKey, 'ok');

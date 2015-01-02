@@ -26,9 +26,10 @@ var DatacenterRequired = TypedError({
 });
 
 var NonexistantKeyPath = TypedError({
-    type: 'nonexistant.key.path',
-    message: 'attempting to get a nonexistant keyPath.\n' +
-    'SUGGESTED FIX: add keyPath and value to config`'
+    type: 'zero-config.nonexistant.keypath',
+    message: 'attempted to get a key in ZeroConfig that does not exist.\n' +
+        'Expected the key {keyPath} to have a defined value.\n' +
+        'SUGGESTED FIX: Update your configuration files to define the key.\n'
 });
 
 var DatacenterFileRequired = TypedError({
