@@ -479,3 +479,18 @@ test('config.freeze()', function t(assert) {
 
     assert.end();
 });
+
+test('config.clone()', function t(assert) {
+    var config = fetchConfig(__dirname);
+
+    config.set('foo', 'bar');
+
+    var clonedConfig = config.clone();
+    clonedConfig.set('foo', 'baz');
+
+    assert.equal(config.get('foo'), 'bar');
+    assert.equal(clonedConfig.get('foo'), 'baz');
+    assert.notEqual(config, clonedConfig);
+
+    assert.end();
+});

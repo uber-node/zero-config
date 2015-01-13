@@ -1,6 +1,7 @@
 var process = require('process');
 var EventEmitter = require('events').EventEmitter;
 var Result = require('raynos-rust-result');
+var clone = require('clone');
 
 var errors = require('./errors.js');
 var readDatacenter = require('./read-datacenter.js');
@@ -42,6 +43,9 @@ function fetchConfigSync(dirname, opts) {
     config.get = localConfigWrapper.get;
     config.set = localConfigWrapper.set;
     config.freeze = localConfigWrapper.freeze;
+    config.clone = function(){
+        return ConfigWrapper(clone(configState));
+    };
     config.getRemote = remoteConfigWrapper.get;
     config.setRemote = remoteConfigWrapper.set;
 

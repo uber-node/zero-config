@@ -56,6 +56,17 @@ You can also call the process with
 ```ocaml
 type Keypath : String | Array<String>
 
+type Config : {
+    get: (keypath?: Keypath) => Any,
+    set: ((keypath: Keypath, value: Any) => void) &
+        (value: Any) => void,
+    freeze: () => void,
+    clone: () => Config
+    getRemote: (keypath?: Keypath) => Any,
+    setRemote: ((keypath: Keypath, value: Any) => void) &
+        (value: Any) => void
+}
+
 zero-config := (dirname: String, opts?: {
     argv?: Array<String>,
     dcValue?: String,
@@ -63,15 +74,7 @@ zero-config := (dirname: String, opts?: {
     env?: Object<String, String>,
     seed?: Object<String, Any>,
     defaults?: Object<String, Any>
-}) => {
-    get: (keypath?: Keypath) => Any,
-    set: ((keypath: Keypath, value: Any) => void) &
-        (value: Any) => void,
-    freeze: () => void,
-    getRemote: (keypath?: Keypath) => Any,
-    setRemote: ((keypath: Keypath, value: Any) => void) &
-        (value: Any) => void
-}
+}) => Config
 ```
 
 `fetchConfig` takes the current __dirname as an argument, it 
@@ -254,6 +257,14 @@ Once you are ready to stop mutating `config` you can call
 
 Note that you can always call `config.setRemote()` as that is
   not effected by `.freeze()`
+
+#### `config.clone()`
+
+To get a deep clone of the config object, use `config.clone()`.
+A cloned config object will have the same underlying data but
+none of the other properties. For example, if you clone a frozen
+config object, you are able to make changes to the clone but not
+the original object.
 
 #### `var value = config.getRemote(keypath)`
 
