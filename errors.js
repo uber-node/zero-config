@@ -25,6 +25,13 @@ var DatacenterRequired = TypedError({
         'SUGGESTED FIX: update the `fetchConfig()` callsite.\n'
 });
 
+var NonexistantKeyPath = TypedError({
+    type: 'zero-config.nonexistant.keypath',
+    message: 'attempted to get a key in ZeroConfig that does not exist.\n' +
+        'Expected the key {keyPath} to have a defined value.\n' +
+        'SUGGESTED FIX: Update your configuration files to define the key.\n'
+});
+
 var DatacenterFileRequired = TypedError({
     type: 'datacenter.file.required',
     message: 'no such file or directory \'{path}\'.\n' + 
@@ -69,6 +76,7 @@ module.exports = {
     DatacenterRequired: DatacenterRequired,
     DatacenterFileRequired: DatacenterFileRequired,
     InvalidKeyPath: InvalidKeyPath,
+    NonexistantKeyPath: NonexistantKeyPath,
     InvalidMultiSetArgument: InvalidMultiSetArgument,
     SetFrozenObject: SetFrozenObject
 };

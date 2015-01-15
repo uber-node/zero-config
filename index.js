@@ -37,8 +37,8 @@ function fetchConfigSync(dirname, opts) {
     }
 
     var configState = getConfigState(dirname, opts);
-    var localConfigWrapper = ConfigWrapper(configState);
-    var remoteConfigWrapper = ConfigWrapper({});
+    var localConfigWrapper = ConfigWrapper(configState, opts.loose);
+    var remoteConfigWrapper = ConfigWrapper({}, opts.loose);
 
     config.get = localConfigWrapper.get;
     config.set = localConfigWrapper.set;
