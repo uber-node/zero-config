@@ -303,7 +303,7 @@ files to support a number of production concerns. These best
  practices reflect our approach and some of the reasons we 
  designed Zero-config as we did.
 
- - Most configuration should live in `common.json`
+ - Configuration should live in a single file
  - Only put configuration in more specific configuration 
 files when you really have to. Dev and test configs should 
 only contain changes to support development 
