@@ -296,9 +296,26 @@ You can use `config.getRemote()` and `config.setRemote()` for
 
 `npm test`
 
+## Best Practices
+
+Zero-config is designed to help you structure your config 
+files to support a number of production concerns. These best
+ practices reflect our approach and some of the reasons we 
+ designed Zero-config as we did.
+
+ - Most configuration should live in `common.json`
+ - Only put configuration in more specific configuration 
+files when you really have to. Dev and test configs should 
+only contain changes to support development 
+(e.g. turning off caching).
+ - Put your secrets in a `secrets.json so that they are 
+easier to manage safely. Ideally never commit these files 
+to your source control repository.
+
 ## Contributors
 
  - Raynos
+ - sh1mmer
 
 ## MIT Licenced
 
