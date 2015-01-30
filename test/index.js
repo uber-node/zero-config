@@ -71,9 +71,11 @@ test('config loads config files', withFixtures(__dirname, {
                 shadowed: ':)'
             }
         }),
-        'secrets.json': JSON.stringify({
-            awsKey: 'ABC123DEF'
-        }),
+        secrets: {
+            'secrets.json': JSON.stringify({
+                awsKey: 'ABC123DEF'
+            }),
+        },
     }
 }, function (assert) {
     var env = {
@@ -122,12 +124,14 @@ test('env config files take presidence', withFixtures(__dirname, {
                 shadowed: ':)'
             }
         }),
-        'secrets.json': JSON.stringify({
-            awsKey: 'ABC123DEF'
-        }),
-        'secrets-test.json': JSON.stringify({
-            awsKey: 'ZYX098WVU'
-        }),
+        secrets : {
+            'secrets.json': JSON.stringify({
+                awsKey: 'ABC123DEF'
+            }),
+            'test.secrets.json': JSON.stringify({
+                awsKey: 'ZYX098WVU'
+            }),
+        },
     }
 }, function (assert) {
     var env = {
