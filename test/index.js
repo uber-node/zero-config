@@ -70,7 +70,12 @@ test('config loads config files', withFixtures(__dirname, {
                 extra: 40,
                 shadowed: ':)'
             }
-        })
+        }),
+        secrets: {
+            'secrets.json': JSON.stringify({
+                awsKey: 'ABC123DEF'
+            }),
+        },
     }
 }, function (assert) {
     var env = {
@@ -85,16 +90,59 @@ test('config loads config files', withFixtures(__dirname, {
     assert.equal(config.get('nested.extra'), 40);
     assert.equal(config.get('someKey'), 'ok');
     assert.equal(config.get('freeKey'), 'nice');
+    assert.equal(config.get('awsKey'), 'ABC123DEF');
 
     var conf = config.get();
     assert.equal(conf.someKey, 'ok');
     assert.equal(conf.freeKey, 'nice');
     assert.equal(conf.port, 4000);
+    assert.equal(conf.awsKey, 'ABC123DEF');
     assert.deepEqual(conf.nested, {
         key: true,
         shadowed: ':)',
         extra: 40
     });
+
+    assert.end();
+}));
+
+test('env config files take presidence', withFixtures(__dirname, {
+    config: {
+        'common.json': JSON.stringify({
+            port: 3000,
+            nested: {
+                key: true,
+                shadowed: ':('
+            },
+            freeKey: 'nice'
+        }),
+        'test.json': JSON.stringify({
+            port: 4000,
+            someKey: 'ok',
+            nested: {
+                extra: 40,
+                shadowed: ':)'
+            }
+        }),
+        secrets : {
+            'secrets.json': JSON.stringify({
+                awsKey: 'ABC123DEF'
+            }),
+            'test.secrets.json': JSON.stringify({
+                awsKey: 'ZYX098WVU'
+            }),
+        },
+    }
+}, function (assert) {
+    var env = {
+        'NODE_ENV': 'test'
+    };
+
+    var config = fetchConfig(__dirname, { env: env });
+    assert.equal(config.get('awsKey'), 'ZYX098WVU');
+
+    var conf = config.get();
+    assert.equal(conf.awsKey, 'ZYX098WVU');
 
     assert.end();
 }));

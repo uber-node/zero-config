@@ -40,6 +40,10 @@ function getConfigState(dirname, opts) {
         dc && NODE_ENV ?
             join(configFolder, NODE_ENV + '.' + dc.datacenter + '.json') :
             null,
+        // load ./config/secrets-NODE_ENV.json
+        NODE_ENV ? join(configFolder, 'secrets', NODE_ENV + '.secrets' + '.json') : null,
+        // load ./config/secrets.json
+        join(configFolder, 'secrets', 'secrets.json'),
         // load ./config/NODE_ENV.json
         NODE_ENV ? join(configFolder, NODE_ENV + '.json') : null,
         // load ./config/common.json
