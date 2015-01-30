@@ -312,7 +312,7 @@ files to support a number of production concerns. These best
 files when you really have to. Dev and test configs should 
 only contain changes to support development 
 (e.g. turning off caching).
- - Put your secrets in a `secrets.json so that they are 
+ - Put your secrets in a `secrets.json` so that they are 
 easier to manage safely. Ideally never commit these files 
 to your source control repository.
 
