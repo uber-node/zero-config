@@ -24,7 +24,7 @@ function getConfigState(dirname, opts) {
         }
     });
 
-    /* use config-chain module as it contains a set of 
+    /* use config-chain module as it contains a set of
         "transports" for loading configuration from disk
     */
     var configTree = configChain(
@@ -41,8 +41,8 @@ function getConfigState(dirname, opts) {
             join(configFolder, NODE_ENV + '.' + dc.datacenter + '.json') :
             null,
         // load ./config/secrets-NODE_ENV.json
-        NODE_ENV ? join(configFolder, 'secrets', NODE_ENV + '.secrets' + '.json') : null,
-        // load ./config/secrets.json
+        NODE_ENV ? join(configFolder, 'secrets' + '-' + NODE_ENV + '.json') : null,
+        // load ./config/secrets/secrets.json
         join(configFolder, 'secrets', 'secrets.json'),
         // load ./config/NODE_ENV.json
         NODE_ENV ? join(configFolder, NODE_ENV + '.json') : null,
@@ -52,7 +52,7 @@ function getConfigState(dirname, opts) {
         opts.defaults || null
     );
 
-    // there is a "bug" in config-chain where it doesn't 
+    // there is a "bug" in config-chain where it doesn't
     // support deep extension. So we flatten deeply
     // https://github.com/dominictarr/config-chain/issues/14
     var configState = flatten(configTree.store);
