@@ -101,9 +101,9 @@ Below are the sources it reads in order of least precendence.
 
  - a `config/common.json` JSON file in your project
  - a `config/NODE_ENV.json` JSON file in your project
- - a `config/secrets/secrets.json JSON file in your project
+ - a `config/secrets/secrets.json` JSON file in your project
  containing secrets (API keys, OAuth tokens, etc)
- - a `config/secrets/NODE_ENV.secrets.json` JSON file in your
+ - a `config/secrets-NODE_ENV.json` JSON file in your
  project containing secrets per NODE_ENV
  - a `config/NODE_ENV.{datacenter}.json` JSON file in your
     project if you specificed a datacenter.
@@ -314,7 +314,12 @@ only contain changes to support development
 (e.g. turning off caching).
  - Put your secrets in a `secrets.json` so that they are 
 easier to manage safely. Ideally never commit these files 
-to your source control repository.
+to your source control repository. This is why we keep secrets
+in a folder that is easy to symlink
+ - If you must have development secrets in source control
+ for developer convenience then try to scrub them from
+ builds of your projects. We call these `secrets-ENV.json` to
+ make that easy.
 
 ## Contributors
 
