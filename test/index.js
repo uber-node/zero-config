@@ -127,11 +127,11 @@ test('env config files take presidence', withFixtures(__dirname, {
         secrets : {
             'secrets.json': JSON.stringify({
                 awsKey: 'ABC123DEF'
-            }),
-            'test.secrets.json': JSON.stringify({
-                awsKey: 'ZYX098WVU'
-            }),
+            })
         },
+        'secrets-test.json': JSON.stringify({
+            awsKey: 'ZYX098WVU'
+        })
     }
 }, function (assert) {
     var env = {
