@@ -40,10 +40,14 @@ function getConfigState(dirname, opts) {
         dc && NODE_ENV ?
             join(configFolder, NODE_ENV + '.' + dc.datacenter + '.json') :
             null,
-        // load ./config/secrets-NODE_ENV.json
-        NODE_ENV ? join(configFolder, 'secrets' + '-' + NODE_ENV + '.json') : null,
-        // load ./config/secrets/secrets.json
-        join(configFolder, 'secrets', 'secrets.json'),
+        // load ./config/secrets/secrets.json only in production
+        NODE_ENV === 'production' ?
+            join(configFolder, 'secrets', 'secrets.json') :
+            null,
+        // load ./config/secrets-NODE_ENV.json except in production
+        NODE_ENV !== 'production' ? 
+            join(configFolder, 'secrets', 'secrets' + '-' + NODE_ENV + '.json') :
+            null,
         // load ./config/NODE_ENV.json
         NODE_ENV ? join(configFolder, NODE_ENV + '.json') : null,
         // load ./config/common.json
