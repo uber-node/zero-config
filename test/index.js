@@ -108,6 +108,43 @@ test('config loads config files', withFixtures(__dirname, {
     assert.end();
 }));
 
+test('env case gets normalized', withFixtures(__dirname, {
+    config: {
+        secrets: {
+            'secrets.json': JSON.stringify({
+                awsKey: 'abc123'
+            }),
+            'secrets-TEST': JSON.stringify({
+                awsKey: 'def456'
+            })
+        }
+    }
+}, function (assert) {
+    var env = {
+        'NODE_ENV': 'PRODUCTION'
+    };
+
+    var config = fetchConfig(__dirname, { env: env , dcValue: 'peak1'});
+
+    assert.equal(config.get('awsKey'), 'abc123');
+
+    var conf = config.get();
+    assert.equal(conf.awsKey, 'abc123');
+
+    env = {
+        'NODE_ENV': 'production'
+    };
+
+    config = fetchConfig(__dirname, { env: env , dcValue: 'peak1'});
+
+    assert.equal(config.get('awsKey'), 'abc123');
+
+    conf = config.get();
+    assert.equal(conf.awsKey, 'abc123');
+
+    assert.end();
+}));
+
 test('env config files take presidence', withFixtures(__dirname, {
     config: {
         'common.json': JSON.stringify({

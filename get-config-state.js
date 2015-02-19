@@ -9,7 +9,7 @@ module.exports = getConfigState;
 function getConfigState(dirname, opts) {
     var cliArgs = parseArgs(opts.argv || process.argv.slice(2));
     var env = opts.env || process.env;
-    var NODE_ENV = env.NODE_ENV;
+    var NODE_ENV = (env.NODE_ENV) ? env.NODE_ENV.toLowerCase() : null;
     var dc = opts.datacenterValue;
     var blackList = opts.blackList || ['_'];
 
