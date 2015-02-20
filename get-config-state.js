@@ -36,7 +36,7 @@ function getConfigState(dirname, opts) {
         cliArgs.config || null,
         // get datacenter from opts.dc file
         dc ? dc : null,
-        // load ./config/NODE_ENV.DATACENTER.json
+        // load ./config/secrets/NODE_ENV.DATACENTER.json
         dc && NODE_ENV ?
             join(configFolder, NODE_ENV + '.' + dc.datacenter + '.json') :
             null,
