@@ -9,7 +9,7 @@ module.exports = getConfigState;
 function getConfigState(dirname, opts) {
     var cliArgs = parseArgs(opts.argv || process.argv.slice(2));
     var env = opts.env || process.env;
-    var NODE_ENV = env.NODE_ENV;
+    var NODE_ENV = (env.NODE_ENV) ? env.NODE_ENV.toLowerCase() : null;
     var dc = opts.datacenterValue;
     var blackList = opts.blackList || ['_'];
 
@@ -36,14 +36,18 @@ function getConfigState(dirname, opts) {
         cliArgs.config || null,
         // get datacenter from opts.dc file
         dc ? dc : null,
-        // load ./config/NODE_ENV.DATACENTER.json
+        // load ./config/secrets/NODE_ENV.DATACENTER.json
         dc && NODE_ENV ?
             join(configFolder, NODE_ENV + '.' + dc.datacenter + '.json') :
             null,
-        // load ./config/secrets-NODE_ENV.json
-        NODE_ENV ? join(configFolder, 'secrets' + '-' + NODE_ENV + '.json') : null,
-        // load ./config/secrets/secrets.json
-        join(configFolder, 'secrets', 'secrets.json'),
+        // load ./config/secrets/secrets.json only in production
+        NODE_ENV === 'production' ?
+            join(configFolder, 'secrets', 'secrets.json') :
+            null,
+        // load ./config/secrets-NODE_ENV.json except in production
+        NODE_ENV !== 'production' ? 
+            join(configFolder, 'secrets', 'secrets' + '-' + NODE_ENV + '.json') :
+            null,
         // load ./config/NODE_ENV.json
         NODE_ENV ? join(configFolder, NODE_ENV + '.json') : null,
         // load ./config/common.json

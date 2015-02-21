@@ -102,9 +102,9 @@ Below are the sources it reads in order of least precendence.
  - a `config/common.json` JSON file in your project
  - a `config/NODE_ENV.json` JSON file in your project
  - a `config/secrets/secrets.json` JSON file in your project
- containing secrets (API keys, OAuth tokens, etc)
- - a `config/secrets-NODE_ENV.json` JSON file in your
- project containing secrets per NODE_ENV
+ containing secrets (API keys, OAuth tokens, etc) only for production
+ - a `config/secrets/secrets-NODE_ENV.json` JSON file in your
+ project containing secrets per NODE_ENV but not production
  - a `config/NODE_ENV.{datacenter}.json` JSON file in your
     project if you specificed a datacenter.
  - a `{ datacenter: '{datacenter}' }` literal if you 

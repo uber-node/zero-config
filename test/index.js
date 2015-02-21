@@ -90,18 +90,57 @@ test('config loads config files', withFixtures(__dirname, {
     assert.equal(config.get('nested.extra'), 40);
     assert.equal(config.get('someKey'), 'ok');
     assert.equal(config.get('freeKey'), 'nice');
-    assert.equal(config.get('awsKey'), 'ABC123DEF');
+    assert.notEqual(config.get('awsKey'), 'ABC123DEF');
 
     var conf = config.get();
     assert.equal(conf.someKey, 'ok');
     assert.equal(conf.freeKey, 'nice');
     assert.equal(conf.port, 4000);
-    assert.equal(conf.awsKey, 'ABC123DEF');
+    assert.notEqual(conf.awsKey, 'ABC123DEF');
     assert.deepEqual(conf.nested, {
         key: true,
         shadowed: ':)',
         extra: 40
     });
+    
+
+
+    assert.end();
+}));
+
+test('env case gets normalized', withFixtures(__dirname, {
+    config: {
+        secrets: {
+            'secrets.json': JSON.stringify({
+                awsKey: 'abc123'
+            }),
+            'secrets-TEST': JSON.stringify({
+                awsKey: 'def456'
+            })
+        }
+    }
+}, function (assert) {
+    var env = {
+        'NODE_ENV': 'PRODUCTION'
+    };
+
+    var config = fetchConfig(__dirname, { env: env , dcValue: 'peak1'});
+
+    assert.equal(config.get('awsKey'), 'abc123');
+
+    var conf = config.get();
+    assert.equal(conf.awsKey, 'abc123');
+
+    env = {
+        'NODE_ENV': 'production'
+    };
+
+    config = fetchConfig(__dirname, { env: env , dcValue: 'peak1'});
+
+    assert.equal(config.get('awsKey'), 'abc123');
+
+    conf = config.get();
+    assert.equal(conf.awsKey, 'abc123');
 
     assert.end();
 }));
@@ -127,11 +166,11 @@ test('env config files take presidence', withFixtures(__dirname, {
         secrets : {
             'secrets.json': JSON.stringify({
                 awsKey: 'ABC123DEF'
+            }),
+            'secrets-test.json': JSON.stringify({
+                awsKey: 'ZYX098WVU'
             })
         },
-        'secrets-test.json': JSON.stringify({
-            awsKey: 'ZYX098WVU'
-        })
     }
 }, function (assert) {
     var env = {
@@ -143,6 +182,16 @@ test('env config files take presidence', withFixtures(__dirname, {
 
     var conf = config.get();
     assert.equal(conf.awsKey, 'ZYX098WVU');
+
+    //reset to production
+    env = {
+        'NODE_ENV': 'production'
+    };
+
+    config = fetchConfig(__dirname, { env: env, dcValue: 'peak1'});
+    assert.equal(config.get('awsKey'), 'ABC123DEF');
+    conf = config.get();
+    assert.equal(conf.awsKey, 'ABC123DEF');
 
     assert.end();
 }));
