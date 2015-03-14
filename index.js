@@ -41,7 +41,6 @@ function fetchConfigSync(dirname, opts) {
     var remoteConfigWrapper = ConfigWrapper({}, opts.loose);
 
     config.get = localConfigWrapper.get;
-    config.strictGet = localConfigWrapper.strictGet;
     config.set = localConfigWrapper.set;
     config.freeze = localConfigWrapper.freeze;
     config.clone = function(){
