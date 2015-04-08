@@ -175,7 +175,10 @@ test('error thrown when not in loose mode', withFixtures(__dirname, {
         'NODE_ENV': 'test'
     };
 
-    var config = fetchConfig(__dirname, {env: env});
+    var config = fetchConfig(__dirname, {
+        env: env,
+        loose: false
+    });
 
     assert.equal(config.get('freeKey'), 'nice');
     assert.throws(function() {

@@ -8,6 +8,9 @@ module.exports = ConfigWrapper;
 
 function ConfigWrapper(configObject, loose) {
     var frozen = false;
+    // default `loose` to true.
+    loose = typeof loose === 'boolean' ? loose : true;
+
 
     return {
         get: configuredGet,
