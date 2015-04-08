@@ -28,7 +28,8 @@ var DatacenterRequired = TypedError({
 var NonexistantKeyPath = TypedError({
     type: 'nonexistant.key.path',
     message: 'attempting to get a nonexistant keyPath.\n' +
-    'SUGGESTED FIX: add keyPath and value to config`'
+        'Expected the key: {keyPath} to be found.\n' +
+        'SUGGESTED FIX: add {keyPath} and value to config'
 });
 
 var DatacenterFileRequired = TypedError({
