@@ -82,8 +82,10 @@ test('config loads config files', withFixtures(__dirname, {
         'NODE_ENV': 'test'
     };
 
-    var config = fetchConfig(__dirname, { env: env });
-
+    var config = fetchConfig(__dirname, {
+            env: env,
+            loose: true
+        });
     assert.equal(config.get('port'), 4000);
     assert.equal(config.get('nested.key'), true);
     assert.equal(config.get('nested.shadowed'), ':)');
@@ -91,6 +93,10 @@ test('config loads config files', withFixtures(__dirname, {
     assert.equal(config.get('someKey'), 'ok');
     assert.equal(config.get('freeKey'), 'nice');
     assert.notEqual(config.get('awsKey'), 'ABC123DEF');
+    assert.equal(config.get('freeKey'), 'nice');
+    assert.equal(config.get('nested.shadowed'), ':)');
+    assert.equal(config.get('fakeKey', undefined));
+
 
     var conf = config.get();
     assert.equal(conf.someKey, 'ok');
@@ -144,6 +150,54 @@ test('env case gets normalized', withFixtures(__dirname, {
 
     assert.end();
 }));
+
+test('error thrown when not in loose mode', withFixtures(__dirname, {
+    config: {
+         'common.json': JSON.stringify({
+            port: 3000,
+            nested: {
+                key: true,
+                shadowed: ':('
+            },
+            freeKey: 'nice'
+        }),
+        'test.json': JSON.stringify({
+            port: 4000,
+            someKey: 'ok',
+            nested: {
+                extra: 40,
+                shadowed: ':)'
+            }
+        })
+    }
+}, function (assert) {
+    var env = {
+        'NODE_ENV': 'test'
+    };
+
+    var config = fetchConfig(__dirname, {
+        env: env,
+        loose: false
+    });
+
+    assert.equal(config.get('freeKey'), 'nice');
+    assert.throws(function() {
+        config.get('fakeKey');
+    }, /nonexistant keyPath/);
+
+    var conf = config.get();
+    assert.equal(conf.someKey, 'ok');
+    assert.equal(conf.freeKey, 'nice');
+    assert.equal(conf.port, 4000);
+    assert.deepEqual(conf.nested, {
+        key: true,
+        shadowed: ':)',
+        extra: 40
+    });
+
+    assert.end();
+}));
+
 
 test('env config files take presidence', withFixtures(__dirname, {
     config: {
@@ -353,7 +407,8 @@ test('no opts.dcValue in production', function (assert) {
 test('blackList feature', function (assert) {
     var config = fetchConfig(__dirname, {
         blackList: ['foo', 'bar'],
-        argv: ['--foo', 'foo', '--bar', 'bar', '--baz', 'baz']
+        argv: ['--foo', 'foo', '--bar', 'bar', '--baz', 'baz'],
+        loose: true
     });
 
     assert.equal(config.get('foo'), undefined);
@@ -366,7 +421,8 @@ test('blackList feature', function (assert) {
 test('blackList unset keys do not break', function (assert) {
     var config = fetchConfig(__dirname, {
         blackList: ['foo', 'bar'],
-        argv: ['--baz', 'baz']
+        argv: ['--baz', 'baz'],
+        loose: true
     });
 
     assert.equal(config.get('foo'), undefined);
@@ -496,7 +552,8 @@ test('config({ defaults: defaults })', function (assert) {
                     bar: 'baz'
                 }
             }
-        }
+        },
+        loose: true
     });
 
     assert.equal(config.get('foo'), 'bar');

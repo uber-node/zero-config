@@ -90,6 +90,7 @@ It returns you a `config` object with a `get(keypath)` method
 It's recommended you use `.get()` as in the future we will 
   enable dynamic config properties through flipr support.
 
+
 ### The config lookup algorithm
 
 The `fetchConfig()` function tries to fetch config from multiple
@@ -200,6 +201,14 @@ If your `opts.blackList` is `['debug']` then `config.get('debug')`
 If you prefer to not have this variable configured through
   the environment or want to call it something else then you
   can pass in `{ NODE_ENV: whatever }` as `opts.env`
+
+#### `opts.loose`
+
+should a value be requested from the config using get() and the
+  key does not exist an error will be thrown. By setting
+  `opts.loose` to `true` this feature is disabled and a value of
+  undefined is returned should this key not be preset in the
+  config.
 
 #### `opts.seed`
 
