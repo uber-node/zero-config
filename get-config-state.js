@@ -36,7 +36,7 @@ function getConfigState(dirname, opts) {
         cliArgs.config || null,
         // get datacenter from opts.dc file
         dc ? dc : null,
-        // load ./config/secrets/NODE_ENV.DATACENTER.json
+        // load ./config/NODE_ENV.DATACENTER.json
         dc && NODE_ENV ?
             join(configFolder, NODE_ENV + '.' + dc.datacenter + '.json') :
             null,
@@ -44,8 +44,8 @@ function getConfigState(dirname, opts) {
         NODE_ENV === 'production' ?
             join(configFolder, 'secrets', 'secrets.json') :
             null,
-        // load ./config/secrets-NODE_ENV.json except in production
-        NODE_ENV !== 'production' ? 
+        // load ./config/secrets/secrets-NODE_ENV.json except in production
+        NODE_ENV !== 'production' ?
             join(configFolder, 'secrets', 'secrets' + '-' + NODE_ENV + '.json') :
             null,
         // load ./config/NODE_ENV.json

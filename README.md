@@ -100,12 +100,14 @@ The `fetchConfig()` function tries to fetch config from multiple
 Below are the sources it reads in order of least precendence.
   i.e. the later sources in the list overwrite the earlier ones
 
+- a defaults object that populates values that have 
+    not been set by any other means.
  - a `config/common.json` JSON file in your project
  - a `config/NODE_ENV.json` JSON file in your project
- - a `config/secrets/secrets.json` JSON file in your project
- containing secrets (API keys, OAuth tokens, etc) only for production
  - a `config/secrets/secrets-NODE_ENV.json` JSON file in your
  project containing secrets per NODE_ENV but not production
+ - a `config/secrets/secrets.json` JSON file in your project
+ containing secrets (API keys, OAuth tokens, etc) only for production
  - a `config/NODE_ENV.{datacenter}.json` JSON file in your
     project if you specificed a datacenter.
  - a `{ datacenter: '{datacenter}' }` literal if you 
@@ -117,8 +119,6 @@ Below are the sources it reads in order of least precendence.
     you pass `--foo='bar' --bar.baz='bob'` you will get
     `{ "foo": "bar", "bar": { "baz": "bob" } }`
  - a seed object of manual overwrites for testing purposes.
- - a defaults object that populates values that have 
-    not been set by any other means.
 
 The config loader also uses `config-chain` for the actual
   loading logic so you can read [their docs][config-chain]
