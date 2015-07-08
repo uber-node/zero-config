@@ -63,14 +63,8 @@ function ConfigWrapper(configObject, loose) {
         }
 
         var v = getKey(keyPath);
-
-        if (typeof v === 'object' && v !== null) {
-            v = deepExtend({}, v, value);
-        } else {
-            v = value;
-        }
-
-        return putPath(configObject, keyPath, v);
+        v = deepExtend({keyPath: v}, {keyPath: value});
+        return putPath(configObject, keyPath, v.keyPath);
     }
 
     function freeze() {
