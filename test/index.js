@@ -108,7 +108,7 @@ test('config loads config files', withFixtures(__dirname, {
         shadowed: ':)',
         extra: 40
     });
-    
+
 
 
     assert.end();
@@ -448,6 +448,18 @@ test('config.set()', function (assert) {
     assert.equal(config.get(['nested', 'key.with.dots5']),
         'value5', 'array key with dots');
 
+    assert.end();
+});
+
+test('config.set(array)', function (assert) {
+    var config = fetchConfig(__dirname);
+
+    config.set('key', {'foo': 'bar'});
+    config.set('key', [1, 2, 3]);
+
+    var val = config.get('key');
+    assert.ok(Array.isArray(val));
+    assert.deepEqual(val, [1, 2, 3]);
     assert.end();
 });
 
