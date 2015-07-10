@@ -61,6 +61,10 @@ function getConfigState(dirname, opts) {
     // https://github.com/dominictarr/config-chain/issues/14
     var configState = flatten(configTree.store);
 
+    // flattenPrototypes grabs `valueOf` prop from the root prototype
+    // remove it here.
+    delete configState.valueOf;
+
     return configState;
 }
 
