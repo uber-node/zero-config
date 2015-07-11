@@ -43,6 +43,13 @@ test('fetchConfig creates a config object', function (assert) {
     assert.end();
 });
 
+test('fetchConfig.get() does not have valueOf key', function (assert) {
+    var config = fetchConfig(__dirname);
+
+    assert.notOk(Object.hasOwnProperty.call(config.get(), 'valueOf'));
+    assert.end();
+});
+
 test('fetchConfig reads from argv', function (assert) {
     var argv = ['--foo', 'bar', '--baz.lulz', 'some value'];
 
