@@ -52,15 +52,20 @@ test('fetchConfig.get() does not have valueOf key', function (assert) {
 
 test('mutating fetchConfig.get() does not mutate state', function (assert) {
     var config = fetchConfig(__dirname);
-    var data = {
-        foo: 'bar'
-    };
+    var object = { foo: 'bar' };
+    var array = ['foo'];
 
-    config.set('shouldNotChange', data);
-    config.get('shouldNotChange').anotherValue = 'shouldNotSet';
+    config.set('shouldNotChangeObject', object);
+    config.get('shouldNotChangeObject').anotherValue = 'shouldNotSet';
+
+    config.set('shouldNotChangeArray', array);
+    config.get('shouldNotChangeArray')[0] = 'shouldNotSet';
 
     assert.notOk(Object.hasOwnProperty.call(
-        config.get('shouldNotChange'), 'anotherValue'));
+        config.get('shouldNotChangeObject'), 'anotherValue'));
+
+    assert.notEqual(config.get('shouldNotChangeArray')[0], 'shouldNotSet');
+
     assert.end();
 });
 
