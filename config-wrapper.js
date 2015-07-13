@@ -20,10 +20,20 @@ function ConfigWrapper(configObject, loose) {
 
     function getKey(keyPath) {
         if (!keyPath) {
-            return configObject;
+            return deepExtend({}, configObject);
         }
 
-        return getPath(configObject, keyPath);
+        // Clone non-primitives before returning
+        var val = getPath(configObject, keyPath);
+        if (typeof val === 'object') {
+            if (Array.isArray(val)) {
+                val = [].concat(val);
+            } else {
+                val = deepExtend({}, val);
+            }
+        }
+
+        return val;
     }
 
     function configuredGet(keyPath){
