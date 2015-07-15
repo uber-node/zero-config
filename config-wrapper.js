@@ -19,21 +19,12 @@ function ConfigWrapper(configObject, loose) {
     };
 
     function getKey(keyPath) {
+        var clonedObject = deepExtend({}, configObject);
         if (!keyPath) {
-            return deepExtend({}, configObject);
+            return clonedObject;
         }
 
-        // Clone non-primitives before returning
-        var val = getPath(configObject, keyPath);
-        if (typeof val === 'object') {
-            if (Array.isArray(val)) {
-                val = [].concat(val);
-            } else {
-                val = deepExtend({}, val);
-            }
-        }
-
-        return val;
+        return getPath(clonedObject, keyPath);
     }
 
     function configuredGet(keyPath){
