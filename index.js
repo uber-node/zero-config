@@ -27,7 +27,7 @@ function fetchConfigSync(dirname, opts) {
 
     if (Result.isErr(result)) {
         var err = Result.Err(result);
-        // throw error async. this allows for breaking a 
+        // throw error async. this allows for breaking a
         // circular dependency between config & logger.
         process.nextTick(function () {
             config.emit('error', err);

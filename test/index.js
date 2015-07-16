@@ -50,6 +50,25 @@ test('fetchConfig.get() does not have valueOf key', function (assert) {
     assert.end();
 });
 
+test('mutating fetchConfig.get() does not mutate state', function (assert) {
+    var config = fetchConfig(__dirname);
+    var object = { foo: 'bar' };
+    var array = ['foo'];
+
+    config.set('shouldNotChangeObject', object);
+    config.get('shouldNotChangeObject').anotherValue = 'shouldNotSet';
+
+    config.set('shouldNotChangeArray', array);
+    config.get('shouldNotChangeArray')[0] = 'shouldNotSet';
+
+    assert.notOk(Object.hasOwnProperty.call(
+        config.get('shouldNotChangeObject'), 'anotherValue'));
+
+    assert.notEqual(config.get('shouldNotChangeArray')[0], 'shouldNotSet');
+
+    assert.end();
+});
+
 test('fetchConfig reads from argv', function (assert) {
     var argv = ['--foo', 'bar', '--baz.lulz', 'some value'];
 
@@ -344,7 +363,7 @@ test('config reads a datacenter file', withFixtures(__dirname, {
     assert.end();
 }));
 
-test('non existant datacenter file', function (assert) {
+test('non existent datacenter file', function (assert) {
     var config = fetchConfig(__dirname, {
         dc: path.join(__dirname, 'datacenter')
     });
