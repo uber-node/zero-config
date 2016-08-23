@@ -72,6 +72,7 @@ zero-config := (dirname: String, opts?: {
     dcValue?: String,
     blackList?: Array<String>,
     env?: Object<String, String>,
+    isStaging?: Boolean,
     seed?: Object<String, Any>,
     defaults?: Object<String, Any>
 }) => Config
@@ -110,6 +111,10 @@ Below are the sources it reads in order of least precendence.
  containing secrets (API keys, OAuth tokens, etc) only for production
  - a `config/NODE_ENV.{datacenter}.json` JSON file in your
     project if you specificed a datacenter.
+ - a `config/staging.json` JSON file in your project if isStaging
+    option is true
+ - a `config/staging.{datacenter}.json` JSON file in your project
+    if isStaging option is true and you specificed a datacenter.
  - a `{ datacenter: '{datacenter}' }` literal if you 
     specified a datacenter.
  - a `--config=/var/config/some-file.json` JSON file if you
@@ -178,6 +183,14 @@ We will also load the file `config/production.EC2-west.json`
 If you do not want `fetchConfig` to read global argv for you,
   you can pass in an `argv` object with keys like `'foo'` and
   `'bar.baz''` and values that are strings / numbers / booleans
+
+#### `opts.isStaging`
+
+`opts.isStaging` is an optional boolean value to indicate it is
+a staging deployment, if set true.
+
+`fetchConfig` will read `staging.json` for a staging deployment,
+ followed by `staging.{datacenter}.json` if datacenter is specified.
 
 #### `opts.blackList`
 
