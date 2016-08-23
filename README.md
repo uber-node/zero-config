@@ -1,12 +1,12 @@
 # zero-config
 
-[![build status][build-png]][build]
-[![Coverage Status][cover-png]][cover]
-[![Davis Dependency status][dep-png]][dep]
+[![build status][build-svg]][build]
+[![Coverage Status][cover-svg]][cover]
+[![Davis Dependency status][dep-svg]][dep]
 
-<!-- [![NPM][npm-png]][npm] -->
+<!-- [![NPM][npm-svg]][npm] -->
 
-<!-- [![browser support][test-png]][test] -->
+<!-- [![browser support][test-svg]][test] -->
 
 A zero configuration configuration loader
 
@@ -350,13 +350,13 @@ in a folder that is easy to symlink
 
 ## MIT Licenced
 
-  [build-png]: https://secure.travis-ci.org/uber/zero-config.png
+  [build-svg]: https://secure.travis-ci.org/uber/zero-config.svg
   [build]: https://travis-ci.org/uber/zero-config
-  [cover-png]: https://coveralls.io/repos/uber/zero-config/badge.png
+  [cover-svg]: https://coveralls.io/repos/uber/zero-config/badge.svg
   [cover]: https://coveralls.io/r/uber/zero-config
-  [dep-png]: https://david-dm.org/uber/zero-config.png
+  [dep-svg]: https://david-dm.org/uber/zero-config.svg
   [dep]: https://david-dm.org/uber/zero-config
-  [test-png]: https://ci.testling.com/uber/zero-config.png
+  [test-svg]: https://ci.testling.com/uber/zero-config.svg
   [tes]: https://ci.testling.com/uber/zero-config
-  [npm-png]: https://nodei.co/npm/zero-config.png?stars&downloads
+  [npm-svg]: https://nodei.co/npm/zero-config.svg?stars&downloads
   [npm]: https://nodei.co/npm/zero-config
