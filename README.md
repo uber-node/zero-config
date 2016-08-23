@@ -111,10 +111,10 @@ Below are the sources it reads in order of least precendence.
  containing secrets (API keys, OAuth tokens, etc) only for production
  - a `config/NODE_ENV.{datacenter}.json` JSON file in your
     project if you specificed a datacenter.
- - a `config/staging.json` JSON file in your project for staging
-    deployment
+ - a `config/staging.json` JSON file in your project if isStaging
+    option is true
  - a `config/staging.{datacenter}.json` JSON file in your project
-  for staging deployment if you specificed a datacenter.
+    if isStaging option is true and you specificed a datacenter.
  - a `{ datacenter: '{datacenter}' }` literal if you 
     specified a datacenter.
  - a `--config=/var/config/some-file.json` JSON file if you
