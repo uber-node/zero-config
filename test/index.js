@@ -430,6 +430,56 @@ test('no opts.dcValue in production', function (assert) {
     assert.end();
 });
 
+test('config loads from staging file', withFixtures(__dirname, {
+    'config': {
+        'common.json': JSON.stringify({
+            a: 'a',
+            b: {
+                c: 'c',
+                d: 'd'
+            }
+        }),
+        'production.json': JSON.stringify({
+            b: {
+                c: 'c2'
+            }
+        }),
+        'production.peak1.json': JSON.stringify({
+            a: 'a3'
+        }),
+        'staging.json': JSON.stringify({
+            b: {
+                d: 'd2'
+            }
+        }),
+        'staging.peak1.json': JSON.stringify({
+            b: {
+                e: 'e'
+            }
+        })
+    },
+    'datacenter': 'peak1'
+}, function (assert) {
+    var env = {
+        'NODE_ENV': 'production'
+    };
+
+    var config = fetchConfig(__dirname, {
+        env: env,
+        dc: path.join(__dirname, 'datacenter'),
+        isStaging: true
+    });
+
+    assert.equal(config.get('datacenter'), 'peak1');
+    assert.equal(config.get('a'), 'a3');
+    assert.equal(config.get('b.c'), 'c2');
+    assert.equal(config.get('b.d'), 'd2');
+    assert.equal(config.get('b.e'), 'e');
+    assert.deepEqual(config.get('b'), { c: 'c2', d: 'd2', e: 'e' });
+
+    assert.end();
+}));
+
 test('blackList feature', function (assert) {
     var config = fetchConfig(__dirname, {
         blackList: ['foo', 'bar'],
