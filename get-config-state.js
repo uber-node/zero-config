@@ -12,6 +12,7 @@ function getConfigState(dirname, opts) {
     var NODE_ENV = (env.NODE_ENV) ? env.NODE_ENV.toLowerCase() : null;
     var dc = opts.datacenterValue;
     var blackList = opts.blackList || ['_'];
+    var isStaging = opts.isStaging;
 
     // hardcoded to read from `./config` by convention
     var configFolder = join(dirname, 'config');
@@ -36,6 +37,12 @@ function getConfigState(dirname, opts) {
         cliArgs.config || null,
         // get datacenter from opts.dc file
         dc ? dc : null,
+        // load ./config/staging.DATACENTER.json
+        dc && isStaging ?
+            join(configFolder, 'staging' + '.' + dc.datacenter + '.json') :
+            null,
+        // load ./config/staging.json
+        isStaging ? join(configFolder, 'staging' + '.json') : null,
         // load ./config/NODE_ENV.DATACENTER.json
         dc && NODE_ENV ?
             join(configFolder, NODE_ENV + '.' + dc.datacenter + '.json') :
