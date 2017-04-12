@@ -61,6 +61,7 @@ type Config : {
     set: ((keypath: Keypath, value: Any) => void) &
         (value: Any) => void,
     freeze: () => void,
+    deepFreeze: () => void,
     clone: () => Config
     getRemote: (keypath?: Keypath) => Any,
     setRemote: ((keypath: Keypath, value: Any) => void) &
@@ -283,6 +284,17 @@ Once you are ready to stop mutating `config` you can call
 
 Note that you can always call `config.setRemote()` as that is
   not effected by `.freeze()`
+
+#### `config.deepFreeze()`
+
+A stricter from of freeze which actually recursively calls 
+Object.freeze() on the config object rendering it immutable. 
+
+In strict mode this will throw an error if calling code attempts
+to mutate the returned config object.  A side benefit of this is 
+that it enables config.get() to return the actual object instead
+of a deep-copy, greatly reducing allocation pressure if your
+application is fetching large objects out of the config repeatedly.
 
 #### `config.clone()`
 

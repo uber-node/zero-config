@@ -11,13 +11,15 @@ module.exports = ConfigWrapper;
 
 function ConfigWrapper(configObject, loose) {
     var frozen = false;
+    var deepFrozen = false;
     // default `loose` to true.
     loose = typeof loose === 'boolean' ? loose : true;
 
     return {
         get: configuredGet,
         set: setKey,
-        freeze: freeze
+        freeze: freeze,
+        deepFreeze: deepFreeze
     };
 
     function getKey(keyPath) {
@@ -73,6 +75,12 @@ function ConfigWrapper(configObject, loose) {
         frozen = true;
     }
 
+    function deepFreeze() {
+        frozen = true;
+        deepFrozen = true;
+        deepFreezeObject(configObject);
+    }
+
     function multiSet(obj) {
         if (obj === null || typeof obj !== 'object') {
             throw errors.InvalidMultiSetArgument({
@@ -89,6 +97,9 @@ function ConfigWrapper(configObject, loose) {
     }
 
     function safe(value) {
+        if (deepFrozen === true) {
+            return value;
+        }
         safeCloneInto.value = null;
         safeCloneFrom.value = value;
         return deepExtend(safeCloneInto, safeCloneFrom).value;
@@ -98,4 +109,19 @@ function ConfigWrapper(configObject, loose) {
 function isValidKeyPath(keyPath) {
     return typeof keyPath === 'string' ||
         Array.isArray(keyPath);
+}
+
+function deepFreezeObject(o) {
+    Object.freeze(o);
+
+    Object.getOwnPropertyNames(o).forEach(function eachProp(prop) {
+        if (Object.hasOwnProperty.call(o, prop) &&
+            o[prop] !== null &&
+            (typeof o[prop] === 'object' || typeof o[prop] === 'function') &&
+            !Object.isFrozen(o[prop])) {
+
+            deepFreezeObject(o[prop]);
+        }
+    });
+    return o;
 }
