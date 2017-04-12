@@ -722,6 +722,37 @@ test('config.freeze()', function t(assert) {
     assert.end();
 });
 
+test('config.deepFreeze()', function t(assert) {
+    var config = fetchConfig(__dirname);
+
+    var deep = {bar: {baz: true}};
+
+    config.set('foo', deep);
+
+    assert.deepEqual(config.get('foo'), deep);
+
+    config.deepFreeze();
+
+    assert.throws(function () {
+        config.set('foo', 'notBaz');
+    }, /Config is frozen/);
+
+    assert.throws(function () {
+        config.set('bar', 'baz');
+    }, /Config is frozen/);
+
+    var immutable = config.get('foo');
+    immutable.bar.baz = false;
+    assert.equal(immutable.bar.baz, true);
+
+    assert.throws(function() {
+        'use strict';
+        immutable.bar.baz = false;
+    }, /Cannot assign to read only property/);
+
+    assert.end();
+});
+
 test('config.clone()', function t(assert) {
     var config = fetchConfig(__dirname);
 

@@ -43,6 +43,7 @@ function fetchConfigSync(dirname, opts) {
     config.get = localConfigWrapper.get;
     config.set = localConfigWrapper.set;
     config.freeze = localConfigWrapper.freeze;
+    config.deepFreeze = localConfigWrapper.deepFreeze;
     config.clone = function(){
         return ConfigWrapper(clone(configState));
     };
