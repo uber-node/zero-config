@@ -753,6 +753,29 @@ test('config.deepFreeze()', function t(assert) {
     assert.end();
 });
 
+test('config.deepFreeze() function strict-mode', function t(assert) {
+    'use strict';
+    var config = fetchConfig(__dirname);
+
+    function bar() {
+        return 'bar';
+    }
+
+    bar.biz = 'biz';
+
+    config.set('foo', bar);
+
+    assert.deepEqual(config.get('foo'), bar);
+
+    config.deepFreeze();
+
+    assert.throws(function a() {
+        config.get('foo').biz = 'should throw';
+    }, /Cannot assign to read only property/);
+
+    assert.end();
+});
+
 test('config.clone()', function t(assert) {
     var config = fetchConfig(__dirname);
 
