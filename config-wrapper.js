@@ -114,7 +114,7 @@ function isValidKeyPath(keyPath) {
 function deepFreezeObject(o) {
     Object.freeze(o);
 
-    Object.getOwnPropertyNames(o).forEach(function eachProp(prop) {
+    Object.keys(o).forEach(function eachProp(prop) {
         if (Object.hasOwnProperty.call(o, prop) &&
             o[prop] !== null &&
             (typeof o[prop] === 'object' || typeof o[prop] === 'function') &&
