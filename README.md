@@ -1,4 +1,5 @@
 # zero-config
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/uber/zero-config?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![build status][build-svg]][build]
 [![Coverage Status][cover-svg]][cover]
