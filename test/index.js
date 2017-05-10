@@ -282,8 +282,16 @@ test('config loads from datacenter file', withFixtures(__dirname, {
             a: 'a',
             b: {
                 c: 'c',
-                d: 'd'
-            }
+                d: 'd',
+                e: 'e'
+            },
+            f: 'f'
+        }),
+        'common.peak1.json': JSON.stringify({
+            b: {
+                e: 'e2'
+            },
+            f: 'f2'
         }),
         'production.json': JSON.stringify({
             b: {
@@ -309,7 +317,9 @@ test('config loads from datacenter file', withFixtures(__dirname, {
     assert.equal(config.get('a'), 'a3');
     assert.equal(config.get('b.c'), 'c2');
     assert.equal(config.get('b.d'), 'd');
-    assert.deepEqual(config.get('b'), { c: 'c2', d: 'd' });
+    assert.equal(config.get('b.e'), 'e2');
+    assert.deepEqual(config.get('b'), { c: 'c2', d: 'd', e: 'e2' });
+    assert.equal(config.get('f'), 'f2');
 
     assert.end();
 }));
